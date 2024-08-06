@@ -6,7 +6,7 @@ const app=express()
 app.use(cors())
 app.use(express.json())
 app.use("/api/v1", productrouter)
-app.use("api/v1",userrouter)
+app.use("/api/v1",userrouter)
 app.get("/",(req,res)=>{
     res.send("hello")
 })

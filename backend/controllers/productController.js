@@ -26,8 +26,6 @@ export const getAllProducts = async (req, res, next) => {
 
 }
 
-
-
 //get product details
 export const getProductDetails = async (req, res, next) => {
     const product = await Product.findById(req.params.id)
