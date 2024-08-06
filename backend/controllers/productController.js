@@ -10,7 +10,7 @@ export const createProduct = async (req, res, next) => {
         success: true,
         product
     })
-}
+}   
 
 
 // get products 
