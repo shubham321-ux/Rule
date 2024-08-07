@@ -1,5 +1,5 @@
 import User from "../models/userModel.js"
-
+import { sendToken } from "../utils/jwttocken.js"
 //register user 
 
 export const registeruser = async (req, res, next) => {
@@ -14,14 +14,7 @@ export const registeruser = async (req, res, next) => {
                 url: "profilepicUrl"
             }
         });
-        const token=user.getJWTToken()
-        res.status(201).json({
-            success: true,
-            user,
-            message: "user created successfully",
-            token
-            
-        })
+        sendToken(user, 201, res)
     }
     catch (error) {
         console.log(error)
@@ -47,14 +40,20 @@ export const loginuser = async (req, res, next) => {
                 message: "incorrect password"
             })
         }
-        const token = user.getJWTToken()
-        res.status(200).json({
-            success: true,
-            user,
-            token
-        })
+        sendToken(user, 201, res)
     }
     catch (error) {
         console.log(error)
     }
+}
+
+//logout user
+export const logoutuser = async (req, res, next) => {
+    res.cookie("token", null, {
+        expires: new Date(Date.now())
+    })
+    res.status(200).json({
+        success: true,
+        message: "logout"
+    })
 }
