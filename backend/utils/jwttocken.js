@@ -15,5 +15,4 @@ export const sendToken=(user,statuscose,res)=>{
         user,
         token
     })
-
 }
