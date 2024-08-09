@@ -3,6 +3,7 @@ import validator from "validator";
 import bcrypt from "bcryptjs";
 import { useCallback } from "react";
 import jwt from "jsonwebtoken";
+import  crypto from "crypto";
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -56,9 +57,21 @@ userSchema.methods.getJWTToken = function () {
         expiresIn: process.env.JWT_EXPIRE
     })
 }
+
 //compare password
 userSchema.methods.comparePassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password)
 }
+
+//forgot password
+userSchema.methods.getResetPasswordToken = function () {
+    //generating token
+    const resetToken = crypto.randomBytes(20).toString("hex")
+   //hashing and adding resetpasswordtoken to userSchema
+   this.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex")
+   this.resetPasswordExpire = Date.now() + 15 * 60 * 1000
+   return resetToken
+}
+
 const User = mongoose.model("User", userSchema)
 export default User
