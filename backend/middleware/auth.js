@@ -16,9 +16,7 @@ export const isauthenticatedUser = async (req, res, next) => {
     next()
 }
 
-
-
-export const authorizeRoles = async (req, res, next) => {
+export const authorizeRolesadmin = async (req, res, next) => {
     const { token } = req.cookies
     if (!token) {
         res.status(401).json(
@@ -39,11 +37,7 @@ export const authorizeRoles = async (req, res, next) => {
         )
         console.log("you are not amin")
     }else{
-       
         console.log("hello welcom ypu are admin")
         next()
     }
-
-  
-    
 }
