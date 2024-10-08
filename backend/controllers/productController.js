@@ -1,4 +1,4 @@
-import e from "express"
+import express from "express"
 import Product from "../models/productModel.js"
 import { Apifeatures } from "../utils/apifeature.js"
 
@@ -26,6 +26,8 @@ export const getAllProducts = async (req, res, next) => {
         })
 
 }
+
+
 
 //get product details
 export const getProductDetails = async (req, res, next) => {

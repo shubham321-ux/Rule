@@ -8,14 +8,12 @@ process.on("uncaughtException",((err)=>{
     console.log(`shutting down the server due to unhandeled Exception`)
    process.exit(1)
 }))
-
-dotenv.config({path:"backend/config/.env"})
+const PORT=process.env.PORT 
+dotenv.config({path:"./config/.env"})
 connectMongo()
 const serverconnect=app.listen(process.env.PORT,()=>{
     console.log(`running in http://localhost:${process.env.PORT}`)
 })
-
-
 
 //unhandled promises rejection 
 process.on("unhandledRejection",(err)=>{

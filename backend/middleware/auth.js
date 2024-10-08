@@ -24,7 +24,6 @@ export const authorizeRolesadmin = async (req, res, next) => {
                 success: false,
                 massage: "plase log in first"
             })
-
     }
     const decodeData = jwt.verify(token, process.env.JWT_SECRET)
     const user = await User.findById(decodeData.id)

@@ -259,7 +259,7 @@ export const getSingleUser = async (req, res) => {
 }
 
 
-////update user role(admin)
+///update user role(admin)
 export const updateUserRole = async (req, res) => {
     try {
         const { id, role } = req.body;
@@ -288,6 +288,7 @@ catch (error) {
 }
 }
 
+//delete user(admin)
 export const deleteuser = async (req, res) => {
     try {
       const user = await User.findById(req.params.id);
