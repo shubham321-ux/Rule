@@ -4,7 +4,7 @@ import { createProduct,updateProduct,deleteProduct,getProductDetails,createProdu
 import {isauthenticatedUser,authorizeRolesadmin} from "../middleware/auth.js"
 const productrouter = express.Router();
 
- productrouter.get('/products',authorizeRolesadmin,getAllProducts);
+ productrouter.get('/products',getAllProducts);
  productrouter.post('/product/new',authorizeRolesadmin,isauthenticatedUser,createProduct)
  productrouter.put('/product/update/:id',isauthenticatedUser,updateProduct)
  productrouter.delete('/product/delete/:id',isauthenticatedUser,deleteProduct)
