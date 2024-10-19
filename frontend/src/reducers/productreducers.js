@@ -2,12 +2,13 @@ import {
     ALL_PRODUCT_REQUEST,
     ALL_PRODUCT_SUCCESS,
     ALL_PRODUCT_FAIL,
+    PRODUCT_DETAILS_FAIL,
+    PRODUCT_DETAILS_SUCCESS,
+    PRODUCT_DETAILS_REQUEST,
     CLEAR_ERRORS
+
 } from '../constants/productConstant.js'
-// import ALL_PRODUCT_REQUEST from '../constants/productConstant.js'
-// import ALL_PRODUCT_SUCCESS from '../constants/productConstant.js'
-// import ALL_PRODUCT_FAIL from '../constants/productConstant.js'
-// import CLEAR_ERRORS from '../constants/productConstant.js'
+
 
 export const productReducers = (state = { products: [] }, action) => {
     switch (action.type) {
@@ -23,6 +24,35 @@ export const productReducers = (state = { products: [] }, action) => {
                 productsCout: action.payload.productsCout
             }
         case ALL_PRODUCT_FAIL:
+            return {
+                loading: false,
+                error: action.payload
+            }
+        case CLEAR_ERRORS:
+            return {
+                ...state,
+                error: null
+            }
+        default:
+            return state
+    }
+}
+
+
+export const productDetailReducers = (state = { product: [] }, action) => {
+    switch (action.type) {
+        case PRODUCT_DETAILS_REQUEST:
+            return {
+                loading: true,
+                ...state
+            }
+        case PRODUCT_DETAILS_SUCCESS:
+            return {
+                loading: false,
+                product: action.payload,
+              
+            }
+        case PRODUCT_DETAILS_FAIL:
             return {
                 loading: false,
                 error: action.payload
