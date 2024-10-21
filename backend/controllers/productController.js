@@ -16,16 +16,37 @@ export const createProduct = async (req, res, next) => {
 
 // get products 
 export const getAllProducts = async (req, res, next) => {
-    const resultPerPage = 5;
-    const apifeature = new Apifeatures(Product.find(), req.query).search().filter().pagination(resultPerPage)
-    const products = await apifeature.query
-    res.status(200).json(
-        {
-            meassage: "route is working",
-            products
-        })
+    const resultPerPage = 4; // Number of products per page
+    const currentPage = Number(req.query.page) || 1; // Current page from query or default to 1
 
-}
+    try {
+        // Building the query based on filters
+        const keyword = req.query.keyword ? {
+            name: {
+                $regex: req.query.keyword,
+                $options: "i"
+            }
+        } : {};
+
+        // Fetching the products with filtering, pagination, and sorting
+        const products = await Product.find({ ...keyword })
+            .limit(resultPerPage) // Limit to the number of products per page
+            .skip(resultPerPage * (currentPage - 1)); // Skip products for previous pages
+
+        const totalProducts = await Product.countDocuments(); // Get total products count
+        const totalPages = Math.ceil(totalProducts / resultPerPage); // Calculate total pages
+
+        res.status(200).json({
+            message: "Route is working",
+            products,
+            totalPages,
+            currentPage // Optional: return the current page for client use
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 
 
 

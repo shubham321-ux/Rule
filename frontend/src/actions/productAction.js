@@ -11,11 +11,11 @@ import {
 } from '../constants/productConstant.js'
 
 //get all products
-export const getProduct = () => async (dispatch) => {
+export const getProduct = (page=1) => async (dispatch) => {
     try {
         dispatch({ type: ALL_PRODUCT_REQUEST })
-        const { data } = await axios.get(`${API_URL}api/v1/products`)
-        dispatch({type: ALL_PRODUCT_SUCCESS, payload: data})
+        const { data } = await axios.get(`${API_URL}api/v1/products?page=${page}`)
+        dispatch({type: ALL_PRODUCT_SUCCESS, payload: data||[], productsCount: data.productsCount || 0})
     }
     catch (error) {
         dispatch({ type: ALL_PRODUCT_FAIL,payload: error.response.data.message })
