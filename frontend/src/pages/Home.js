@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Header from "../components/Header";
 import { getProduct } from "../actions/productAction";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 const Home = () => {
     const dispatch = useDispatch();
@@ -11,10 +11,13 @@ const Home = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [allProducts, setAllProducts] = useState([]);
+    const [searchKeyword, setSearchKeyword] = useSearchParams();
+
+    const keyword = searchKeyword.get("keyword") || "";
 
     useEffect(() => {
-        dispatch(getProduct(currentPage));
-    }, [dispatch, currentPage]);
+        dispatch(getProduct(currentPage, keyword));
+    }, [dispatch, currentPage, keyword]);
 
     useMemo(() => {
         if (products && Array.isArray(products.products)) {
@@ -43,12 +46,25 @@ const Home = () => {
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
-    }, [currentPage, totalPages]); // Dependency array updated
+    }, [currentPage, totalPages]);
+
+    const handleSearchChange = (e) => {
+        const newKeyword = e.target.value;
+        setSearchKeyword({ keyword: newKeyword });
+        setCurrentPage(1); // Reset to the first page on new search
+        setAllProducts([]); // Clear previous products
+    };
 
     return (
         <>
             <Header />
             <h1>Home</h1>
+            <input
+                type="text"
+                placeholder="Search..."
+                value={keyword}
+                onChange={handleSearchChange}
+            />
             <div style={{ display: "flex", flexWrap: "wrap", flexDirection: "column" }}>
                 {loading ? (
                     <p>Loading...</p>

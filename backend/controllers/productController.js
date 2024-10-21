@@ -16,7 +16,7 @@ export const createProduct = async (req, res, next) => {
 
 // get products 
 export const getAllProducts = async (req, res, next) => {
-    const resultPerPage = 4; // Number of products per page
+    const resultPerPage = 4; 
     const currentPage = Number(req.query.page) || 1; // Current page from query or default to 1
 
     try {

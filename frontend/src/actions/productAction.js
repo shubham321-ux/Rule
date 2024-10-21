@@ -11,16 +11,16 @@ import {
 } from '../constants/productConstant.js'
 
 //get all products
-export const getProduct = (page=1) => async (dispatch) => {
+export const getProduct = (page = 1, keyword = "") => async (dispatch) => {
     try {
-        dispatch({ type: ALL_PRODUCT_REQUEST })
-        const { data } = await axios.get(`${API_URL}api/v1/products?page=${page}`)
-        dispatch({type: ALL_PRODUCT_SUCCESS, payload: data||[], productsCount: data.productsCount || 0})
+        dispatch({ type: ALL_PRODUCT_REQUEST });
+        const { data } = await axios.get(`${API_URL}api/v1/products?page=${page}&keyword=${keyword}`);
+        dispatch({ type: ALL_PRODUCT_SUCCESS, payload: data || [], productsCount: data.productsCount || 0 });
+    } catch (error) {
+        dispatch({ type: ALL_PRODUCT_FAIL, payload: error.response.data.message });
     }
-    catch (error) {
-        dispatch({ type: ALL_PRODUCT_FAIL,payload: error.response.data.message })
-    }
-}
+};
+
 
 //get product details
 export const getProductDetails = (id) => async (dispatch) => {
