@@ -6,6 +6,7 @@ const Header = () => {
             <nav style={{ display: "flex", justifyContent: "space-evenly" }}>
                 <Link to="/">Home</Link>
                 <Link to="/products">Products</Link>
+                <Link to= "/Login">Login</Link>
             </nav>
         </header>
 

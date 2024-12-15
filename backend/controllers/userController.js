@@ -2,27 +2,69 @@ import User from "../models/userModel.js"
 import { sendToken } from "../utils/jwttocken.js"
 import { sendEmail } from "../utils/sendEmail.js"
 import crypto from "crypto"
+import cloudinary from "cloudinary"
+import streamifier from "streamifier"
 //register user 
-
 export const registeruser = async (req, res, next) => {
-    const { name, email, password } = req.body
     try {
-        const user = await User.create({
-            name,
-            email,
-            password,
-            avatar: {
-                public_id: "this is a sample id",
-                url: "profilepicUrl"
+      // Check if avatar is present in the request
+      if (!req.files || !req.files.avatar) {
+        return res.status(400).json({ message: "Avatar is required" });
+      }
+  
+      const { name, email, password } = req.body;
+      const avatar = req.files.avatar;
+  
+      // Log the avatar data to verify it's being received correctly
+      console.log("Received avatar file:", avatar);
+  
+      // Convert buffer to a readable stream
+      const bufferStream = streamifier.createReadStream(avatar.data);
+  
+      // Upload image buffer as a stream to Cloudinary
+      const result = await new Promise((resolve, reject) => {
+        bufferStream.pipe(
+          cloudinary.uploader.upload_stream(
+            {
+              folder: 'avatars', // Cloudinary folder where images are stored
+              width: 150,
+              crop: 'scale',
+            },
+            (error, result) => {
+              if (error) {
+                reject(error);
+              } else {
+                resolve(result);
+              }
             }
-        });
-        sendToken(user, 201, res)
+          )
+        );
+      });
+  
+      console.log("Cloudinary upload result:", result);
+  
+      // Create user with Cloudinary avatar URL and public_id
+      const user = await User.create({
+        name,
+        email,
+        password,
+        avatar: {
+          public_id: result.public_id,
+          url: result.secure_url,
+        },
+      });
+  
+      // Send the token (or user information) as a response
+      sendToken(user, 201, res);
+  
+    } catch (error) {
+      console.error("Error in registeruser:", error);  // Log the full error for debugging
+      return res.status(500).json({
+        message: 'Server Error',
+        error: error.message || error,
+      });
     }
-    catch (error) {
-        console.log(error)
-    }
-}
-
+  };
 //login user
 
 export const loginuser = async (req, res, next) => {
