@@ -11,14 +11,19 @@ import { useEffect } from 'react';
 import store from './store';
 import { useSelector } from 'react-redux';
 import ProtectedRoute from './components/ProtectedRoute';
+import ForgotPasswordForm from './components/ForgotPasswordForm';
+import ResetPasswordForm from './components/ResetPasswordForm';
+import AdminProtectedRoute from './components/AdminProtectedRoute';
+
 function App() {
+
  
   useEffect(()=>
   {
     store.dispatch(loadUser())
   },[])
   const{isAuthenticated,user}=useSelector((state)=>state.user)
-  console.log(isAuthenticated)
+  console.log("user",user)
   return (<>
   <BrowserRouter>
   <Routes>
@@ -27,7 +32,8 @@ function App() {
       <ProtectedRoute><Products/></ProtectedRoute>}/>
     <Route path="/product/:id" element={<ProductDetails/>}/>
     <Route path="/Login" element={<Login/>}/>
-
+    <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+ <Route path="/password-reset/:token" element={<ResetPasswordForm />} />
   </Routes>
   </BrowserRouter>
   </>

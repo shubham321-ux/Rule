@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import { getProduct } from "../actions/productAction";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useSearchParams } from "react-router-dom";
-
+import LogoutButton from "../components/LogoutButton";
 const Home = () => {
     const dispatch = useDispatch();
     const { products, loading, error } = useSelector((state) => state.products);
@@ -59,6 +59,7 @@ const Home = () => {
         <>
             <Header />
             <h1>Home</h1>
+            <LogoutButton/>
             <input
                 type="text"
                 placeholder="Search..."

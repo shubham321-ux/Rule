@@ -6,7 +6,7 @@ import fileUpload from 'express-fileupload';
 import productrouter from './routes/productRoute.js';
 import userrouter from './routes/uerRoute.js';
 import orderrouter from './routes/orderRoute.js';
-
+const frontendURL=process.env.FRONTEND_URL
 const app = express();
 
 // Define the CORS options dynamically based on the environment

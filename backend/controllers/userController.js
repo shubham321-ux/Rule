@@ -72,14 +72,18 @@ export const loginuser = async (req, res, next) => {
 
 //logout user
 export const logoutuser = async (req, res, next) => {
-    res.cookie("token", null, {
-        expires: new Date(Date.now())
-    })
+    res.cookie("token", "", {
+        expires: new Date(Date.now()), // Expire the cookie immediately
+        httpOnly: true,  // Ensure cookie is HTTP only
+        secure: process.env.NODE_ENV === "production",  // Secure cookie in production (uses HTTPS)
+        sameSite: "strict",  // Prevent cross-site cookie sending
+    });
+
     res.status(200).json({
         success: true,
-        message: "logout"
-    })
-}
+        message: "logout successful"
+    });
+};
 
 ///forgot password
 export const forgotpassword = async (req, res, next) => {
@@ -95,7 +99,8 @@ export const forgotpassword = async (req, res, next) => {
         }
         const resetToken = user.getResetPasswordToken()
         await user.save()
-        const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/password/reset/${resetToken}`
+        const frontendUrl = process.env.FRONTEND_URL 
+        const resetUrl = `${frontendUrl}/password-reset/${resetToken}`;
         const message = `your password reset token is as follow \n\n ${resetUrl} \n\n if you have not requested this email then please ignore it`
         try {
             await sendEmail({
@@ -106,6 +111,7 @@ export const forgotpassword = async (req, res, next) => {
             res.status(200).json({
                 success: true,
                 message: `email sent to ${user.email} successfully`
+             
             })
         }
         catch (error) {
@@ -157,16 +163,30 @@ export const resetpassword = async (req, res, next) => {
 //find user
 export const getuser = async (req, res, next) => {
     try {
-        const user = await User.findById(req.body.id)
+        // Use req.user from the isauthenticatedUser middleware
+        const user = req.user;
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
         res.status(200).json({
             success: true,
             user
-        })
+        });
     }
     catch (error) {
-        console.log(error)
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: "Server Error"
+        });
     }
 }
+
 
 // Get user data from token stored in cookies
 export const getUserFromToken = async (req, res, next) => {
