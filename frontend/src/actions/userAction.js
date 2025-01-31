@@ -16,8 +16,10 @@ import {
     RESET_PASSWORD_FAIL,
     RESET_PASSWORD_REQUEST,
     RESET_PASSWORD_SUCCESS,
+
     CLEAR_ERRORS
 } from "../constants/userConstant.js";
+import { CLEAR_CART } from "../constants/cartConstanat.js";
 import axios from "axios";
 import { API_URL } from '../config/config.js';
 
@@ -85,9 +87,25 @@ export const loadUser = () => async (dispatch) => {
 //logout action
 export const logout = () => async (dispatch) => {
     try {
-        // Set withCredentials to true to send cookies with the request
+        // Logout from backend
         await axios.get(`${API_URL}api/v1/logout/user`, { withCredentials: true });
+        
+        // Clear user data
         dispatch({ type: LOGOUT_SUCCESS });
+        
+        // Clear cart data
+        dispatch({ type: CLEAR_CART });
+        
+        // Clear all localStorage data
+        localStorage.removeItem('user');
+        localStorage.removeItem('cartItems');
+        
+        // Clear user-specific cart if exists
+        const userId = JSON.parse(localStorage.getItem('user'))?._id;
+        if (userId) {
+            localStorage.removeItem(`cart_${userId}`);
+        }
+
     } catch (error) {
         const errorMessage = error.response ? error.response.data.message : error.message;
         dispatch({ type: LOGOUT_FAILED, payload: errorMessage });

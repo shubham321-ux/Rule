@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getProductDetails, addToCart } from '../actions/productAction'; // Import the addToCart action
+import { getProductDetails } from '../actions/productAction'; // Import the addToCart action
+import { addToCart } from '../actions/cartaction';
 import { useParams } from 'react-router-dom';
 import ReactStars from 'react-stars'
 
@@ -16,7 +17,7 @@ const ProductDetails = () => {
     }, [dispatch, id]);
 
     const handleAddToCart = () => {
-
+     dispatch(addToCart(id, quantity)); 
     };
 
     const handleAddReview = () => {
