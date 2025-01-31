@@ -1,9 +1,9 @@
 import { createStore, combineReducers, applyMiddleware } from "redux";
-import {thunk} from "redux-thunk"; // Correct import for redux-thunk
-import { composeWithDevTools } from "redux-devtools-extension"; // Correct import for Redux DevTools
+import {thunk} from "redux-thunk"; 
+import { composeWithDevTools } from "redux-devtools-extension"; 
 
 // Import your reducers
-import { productReducers, productDetailReducers } from "./reducers/productreducers";
+import { productReducers, productDetailReducers,createProductReducer } from "./reducers/productreducers";
 import { userReducer } from "./reducers/userreducers";
 
 // Combine reducers
@@ -11,6 +11,7 @@ const reducer = combineReducers({
   products: productReducers,
   productDetails: productDetailReducers,
   user: userReducer,
+  createProduct: createProductReducer,
 });
 
 // Set initial state (can be an empty object or customized based on your needs)
@@ -23,7 +24,7 @@ const middleware = [thunk];
 const store = createStore(
   reducer,
   initialState,
-  composeWithDevTools(applyMiddleware(...middleware)) // Use Redux DevTools with middleware
+  composeWithDevTools(applyMiddleware(...middleware)) 
 );
 
 export default store;

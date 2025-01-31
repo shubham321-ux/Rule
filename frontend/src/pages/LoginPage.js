@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 import Header from "../components/Header";
 import "../css/LoginPage.css";
 import { login, register } from "../actions/userAction";
 
 const Login = () => {
     const dispatch = useDispatch();
+    const { isAuthenticated, user } = useSelector((state) => state.user);
+    const navigation = useNavigate();
     const [isLogin, setIsLogin] = useState(true);
     const [loginData, setLoginData] = useState({
         email: "",
@@ -15,7 +19,8 @@ const Login = () => {
     const [registerData, setRegisterData] = useState({
         name: "",
         email: "",
-        password: ""
+        password: "",
+        avatar: null // Add avatar property to track the file
     });
 
     const handleLoginChange = (e) => {
@@ -32,14 +37,28 @@ const Login = () => {
         });
     };
 
+    // Handle file input change for avatar
+    const handleFileChange = (e) => {
+        setRegisterData({
+            ...registerData,
+            avatar: e.target.files[0] // Store the selected file in state
+        });
+    };
+
     const submitLogin = (e) => {
         e.preventDefault();
-        dispatch(login(loginData.email, loginData.password)); // Dispatch login action
+        dispatch(login(loginData.email, loginData.password)); 
+        if (isAuthenticated) {
+            console.log("Login successful!");
+            navigation("/");
+        } else {
+            console.log("Login failed.");
+        }
     };
 
     const submitRegister = (e) => {
         e.preventDefault();
-        
+    
         const { name, email, password, avatar } = registerData;
     
         const formData = new FormData();
@@ -47,15 +66,20 @@ const Login = () => {
         formData.append("email", email);
         formData.append("password", password);
         if (avatar) {
-            formData.append("avatar", avatar); // Only append avatar if it exists
+            formData.append("avatar", avatar);  // Make sure 'avatar' is the correct field name in multer
         }
     
-        // Dispatch the action with formData
+        // Dispatch the action with FormData
         dispatch(register(formData));
+        if (isAuthenticated) {
+            console.log("Registration successful!");
+            navigation("/");
+        } else {
+            console.log("Registration failed.");
+        }
+        
     };
-    
-    
-    
+
     return (
         <>
             <Header />
@@ -143,6 +167,15 @@ const Login = () => {
                                                     value={registerData.password}
                                                     onChange={handleRegisterChange}
                                                     required
+                                                />
+                                            </div>
+                                            <div className="mb-4">
+                                                <label className="form-label">Avatar (Optional)</label>
+                                                <input
+                                                    type="file"
+                                                    className="form-input"
+                                                    name="avatar"
+                                                    onChange={handleFileChange}
                                                 />
                                             </div>
                                             <button type="submit" className="submit-button">Register</button>

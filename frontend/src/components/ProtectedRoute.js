@@ -8,7 +8,6 @@ const ProtectedRoute = ({ children }) => {
 
   // If the user is not authenticated, redirect to the login page
   if (!isAuthenticated) {
-    alert("please log in first for this ")
     return <Navigate to="/login" replace />;
   }
 

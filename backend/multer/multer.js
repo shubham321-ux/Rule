@@ -1,34 +1,49 @@
 import multer from 'multer';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Set up storage engine
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    // Ensure the directory exists
-    cb(null, 'uploads/avatars'); // Folder for avatar images
-  },
-  filename: (req, file, cb) => {
-    // Define a unique filename for each uploaded file
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
+    destination: function (req, file, cb) {
+        const uploadPath = path.join(__dirname, '..', 'uploads');
+        cb(null, uploadPath);
+    },
+    filename: function (req, file, cb) {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
 });
 
-// Create multer instance with storage config
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // Max file size of 5MB
-  fileFilter: (req, file, cb) => {
-    // Only allow image files
-    const filetypes = /jpeg|jpg|png|gif/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
+const fileFilter = (req, file, cb) => {
+    // Handle both images and PDFs
+    if (file.fieldname === 'avatar') {
+        const filetypes = /jpeg|jpg|png|gif/;
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = filetypes.test(file.mimetype);
 
-    if (extname && mimetype) {
-      return cb(null, true);
-    } else {
-      return cb(new Error('Only image files are allowed!'));
+        if (mimetype && extname) {
+            return cb(null, true);
+        }
+        cb(new Error('Only image files are allowed for avatar'));
+    } 
+    else if (file.fieldname === 'productPDF') {
+        if (file.mimetype === 'application/pdf') {
+            return cb(null, true);
+        }
+        cb(new Error('Only PDF files are allowed for product documentation'));
     }
-  }
+    else {
+        cb(null, true);
+    }
+};
+
+const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: {
+        fileSize: 10 * 1024 * 1024 // 10MB limit
+    }
 });
 
 export default upload;

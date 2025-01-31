@@ -7,28 +7,40 @@ import { Apifeatures } from "../utils/apifeature.js"
 // Create Product
 export const createProduct = async (req, res) => {
     try {
-        // Destructure the product data from the request body
-        const { name, description, price, category, stock, images } = req.body;
+        const { name, description, price, category, stock } = req.body;
 
-        // Validation: Check if required fields are missing
-        if (!name || !description || !price || !category || !stock ) {
-            return res.status(400).json({
-                success: false,
-                message: "Please provide all the required fields: name, description, price, category, stock, and images."
-            });
+        // Handle images
+        let images = [];
+        if (req.files && req.files.images) {
+            const baseUrl = `${req.protocol}://${req.get('host')}`;
+            images = req.files.images.map(file => ({
+                public_id: file.filename,
+                url: `${baseUrl}/uploads/${file.filename}`
+            }));
         }
 
-        // Create a new product
+        // Handle PDF - Modified this part
+        let productPDF = null;
+        if (req.files && req.files.productPDF && req.files.productPDF[0]) {
+            const pdfFile = req.files.productPDF[0];
+            const baseUrl = `${req.protocol}://${req.get('host')}`;
+            productPDF = {
+                public_id: pdfFile.filename,
+                url: `${baseUrl}/uploads/${pdfFile.filename}`,
+                filename: pdfFile.originalname
+            };
+        }
+
         const product = await Product.create({
             name,
             description,
             price,
             category,
             stock,
-            images
+            images,
+            productPDF // Include this in creation
         });
 
-        // Send the success response with product details
         res.status(201).json({
             success: true,
             product
@@ -42,6 +54,8 @@ export const createProduct = async (req, res) => {
         });
     }
 };
+
+
 
 
 // get products 
@@ -99,23 +113,55 @@ export const getProductDetails = async (req, res, next) => {
 
 // Update products-Admin
 export const updateProduct = async (req, res) => {
-    let product = await Product.findById(req.params.id);
-    if (!product) {
+    try {
+        let product = await Product.findById(req.params.id);
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+
+        // Handle new images if uploaded
+        if (req.files && req.files['images']) {
+            const baseUrl = `${req.protocol}://${req.get('host')}`;
+            const newImages = req.files['images'].map(file => ({
+                public_id: file.filename,
+                url: `${baseUrl}/uploads/${file.filename}`
+            }));
+            req.body.images = newImages;
+        }
+
+        // Handle new PDF if uploaded
+        if (req.files && req.files['productPDF']) {
+            const baseUrl = `${req.protocol}://${req.get('host')}`;
+            const pdfFile = req.files['productPDF'][0];
+            req.body.productPDF = {
+                public_id: pdfFile.filename,
+                url: `${baseUrl}/uploads/${pdfFile.filename}`,
+                filename: pdfFile.originalname
+            };
+        }
+
+        product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            runValidators: true,
+            useFindAndModify: false
+        });
+
+        res.status(200).json({
+            success: true,
+            product
+        });
+    } catch (error) {
+        console.error("Error in updateProduct:", error);
         res.status(500).json({
             success: false,
-            meassage: 'product not found'
-        })
+            message: "Server Error: Unable to update product",
+            error: error.message
+        });
     }
-    product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true,
-        useFindModify: false
-    })
-    res.status(200).json({
-        success: true,
-        product
-    })
-}
+};
 
 
 

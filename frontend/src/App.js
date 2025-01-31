@@ -14,6 +14,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ForgotPasswordForm from './components/ForgotPasswordForm';
 import ResetPasswordForm from './components/ResetPasswordForm';
 import AdminProtectedRoute from './components/AdminProtectedRoute';
+import CreateProduct from './dashboard/Createproduct';
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
     <Route path="/Login" element={<Login/>}/>
     <Route path="/forgot-password" element={<ForgotPasswordForm />} />
  <Route path="/password-reset/:token" element={<ResetPasswordForm />} />
+ <Route path="/create-product" element={<AdminProtectedRoute><CreateProduct/></AdminProtectedRoute>}/>
   </Routes>
   </BrowserRouter>
   </>

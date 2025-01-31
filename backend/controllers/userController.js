@@ -4,25 +4,32 @@ import { sendEmail } from "../utils/sendEmail.js"
 import crypto from "crypto"
 import cloudinary from "cloudinary"
 import streamifier from "streamifier"
+import upload from "../multer/multer.js"
 
 
 // Register user
+// In your controller (userController.js)
+
 export const registeruser = async (req, res, next) => {
     try {
         const { name, email, password } = req.body;
 
-        // Check if the email already exists in the database
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({
                 success: false,
-                message: 'Email is already registered.',
+                message: "Email is already registered.",
             });
         }
 
         let avatar = null;
         if (req.file) {
-            // Handle avatar file upload logic here...
+            // Create full URL for the avatar
+            const baseUrl = `${req.protocol}://${req.get('host')}`;
+            avatar = {
+                public_id: req.file.filename,
+                url: `${baseUrl}/uploads/${req.file.filename}`, // Full URL path
+            };
         }
 
         const user = await User.create({
@@ -32,7 +39,7 @@ export const registeruser = async (req, res, next) => {
             avatar: avatar || {},
         });
 
-        sendToken(user, 201, res);  // Send JWT or user info after successful registration
+        sendToken(user, 201, res);
     } catch (error) {
         console.error("Error registering user:", error);
         return res.status(500).json({
@@ -41,6 +48,8 @@ export const registeruser = async (req, res, next) => {
         });
     }
 };
+
+
 
 
 // Add multer upload middleware to the route
@@ -264,28 +273,54 @@ export const updatepassword = async (req, res, next) => {
 
 //update user
 export const userupdate = async (req, res) => {
-    const { id, name, email, avatar } = req.body;
-
     try {
-        const updatedUser = await User.findByIdAndUpdate(
-            id,
-            { name, email, avatar },
-            { new: true, runValidators: true }
-        );
-
-        if (!updatedUser) {
+        const { id, name, email } = req.body;
+        
+        // Find existing user
+        const user = await User.findById(id);
+        if (!user) {
             return res.status(404).json({
                 success: false,
                 message: "User not found"
             });
         }
 
+        // Handle avatar update
+        let avatar = user.avatar; // Keep existing avatar by default
+        if (req.file) {
+            // Delete previous avatar file if it exists
+            if (user.avatar && user.avatar.public_id) {
+                const previousAvatarPath = path.join(__dirname, '..', 'uploads', user.avatar.public_id);
+                if (fs.existsSync(previousAvatarPath)) {
+                    fs.unlinkSync(previousAvatarPath);
+                }
+            }
+
+            // Create new avatar URL
+            const baseUrl = `${req.protocol}://${req.get('host')}`;
+            avatar = {
+                public_id: req.file.filename,
+                url: `${baseUrl}/uploads/${req.file.filename}`
+            };
+        }
+
+        // Update user with new data
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            { 
+                name, 
+                email, 
+                avatar 
+            },
+            { new: true, runValidators: true }
+        );
+
         res.status(200).json({
             success: true,
             message: "User updated successfully",
             user: updatedUser
         });
-        console.log(updatedUser);
+
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -295,6 +330,7 @@ export const userupdate = async (req, res) => {
         });
     }
 };
+
 
 //get all users(admin)
 export const getAllUsers = async (req, res) => {

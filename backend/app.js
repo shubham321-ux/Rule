@@ -2,37 +2,49 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-import fileUpload from 'express-fileupload';
 import productrouter from './routes/productRoute.js';
 import userrouter from './routes/uerRoute.js';
 import orderrouter from './routes/orderRoute.js';
-const frontendURL=process.env.FRONTEND_URL
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import fs from 'fs';
+
+// ES Module fix for __dirname
+const currentFilePath = fileURLToPath(import.meta.url);
+const currentDirPath = dirname(currentFilePath);
+
 const app = express();
 
-// Define the CORS options dynamically based on the environment
-const corsOptions = {
-  origin: process.env.NODE_ENV === 'production'
-    ? 'https://your-production-frontend-url.com' 
-    : 'http://localhost:3001',  // Default to localhost in development
-  credentials: true,  // Allow cookies/credentials to be sent
-};
+// Enable CORS with specific options
+app.use(cors({
+    origin: 'http://localhost:3001',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-// Use CORS with the specified dynamic options
-app.use(cors(corsOptions));
+// Create uploads directory using the correct path
+const uploadDir = path.join(currentDirPath, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
 
+// Middlewares
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(fileUpload());
 
-// Use the routes
+// Static files with correct path
+app.use('/uploads', express.static(path.join(currentDirPath, 'uploads')));
+
+// Routes
 app.use("/api/v1", productrouter);
 app.use("/api/v1", userrouter);
 app.use("/api/v1", orderrouter);
 
-// Simple route for testing
 app.get("/", (req, res) => {
-  res.send("hello");
+    res.send("hello");
 });
 
 export default app;

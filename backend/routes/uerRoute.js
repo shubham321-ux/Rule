@@ -21,7 +21,7 @@ import upload from "../multer/multer.js"; // Import the Multer configuration
 const userrouter = express.Router();
 
 // Register user - Public (with avatar upload)
-userrouter.post('/register/user', registeruser);
+userrouter.post('/register/user', upload.single('avatar'), registeruser);
 
 // Login user - Public
 userrouter.post('/login/user', loginuser);

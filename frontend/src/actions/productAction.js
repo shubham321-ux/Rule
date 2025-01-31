@@ -7,6 +7,10 @@ import {
     PRODUCT_DETAILS_FAIL,
     PRODUCT_DETAILS_SUCCESS,
     PRODUCT_DETAILS_REQUEST,
+    CREATE_PRODUCT_REQUEST,
+    CREATE_PRODUCT_SUCCESS,
+    CREATE_PRODUCT_FAIL,
+    CREATE_PRODUCT_RESET,
     CLEAR_ERRORS
 } from '../constants/productConstant.js'
 
@@ -35,6 +39,29 @@ export const getProductDetails = (id) => async (dispatch) => {
         dispatch({ type: PRODUCT_DETAILS_FAIL,payload: error.response.data.message })
     }
 }
+
+
+//create product
+export const createProduct = (productData) => async (dispatch) => {
+    try {
+        dispatch({ type: ALL_PRODUCT_REQUEST });
+        dispatch({ type: CREATE_PRODUCT_REQUEST });
+        const config = {
+            headers: {
+                "Content-Type": "multipart/form-data",  // Important for file uploads
+            },
+            withCredentials: true,  // Ensure cookies (like JWT) are sent with the request
+        };
+
+        const { data } = await axios.post(`${API_URL}api/v1/product/new`, productData,config);
+        dispatch({ type: ALL_PRODUCT_SUCCESS, payload: data || [], productsCount: data.productsCount || 0 });
+        dispatch({ type: CREATE_PRODUCT_SUCCESS, payload: data });
+    } catch (error) {
+        dispatch({ type: ALL_PRODUCT_FAIL, payload: error.response.data.message });
+        dispatch({ type: CREATE_PRODUCT_FAIL, payload: error.response.data.message });
+    }
+};
+
 
 //clear errors
 export const clearErrors = () => async (dispatch) => {

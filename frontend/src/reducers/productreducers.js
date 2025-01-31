@@ -5,6 +5,10 @@ import {
     PRODUCT_DETAILS_FAIL,
     PRODUCT_DETAILS_SUCCESS,
     PRODUCT_DETAILS_REQUEST,
+    CREATE_PRODUCT_REQUEST,
+    CREATE_PRODUCT_SUCCESS,
+    CREATE_PRODUCT_FAIL,
+    CREATE_PRODUCT_RESET,
     CLEAR_ERRORS
 
 } from '../constants/productConstant.js'
@@ -56,6 +60,40 @@ export const productDetailReducers = (state = { product: [], }, action) => {
             return {
                 loading: false,
                 error: action.payload
+            }
+        case CLEAR_ERRORS:
+            return {
+                ...state,
+                error: null
+            }
+        default:
+            return state
+    }
+}
+
+export const createProductReducer = (state = {}, action) => {
+    switch (action.type) {
+        case CREATE_PRODUCT_REQUEST:
+            return {
+                ...state,
+                loading: true
+            }
+        case CREATE_PRODUCT_SUCCESS:
+            return {
+                loading: false,
+                success: action.payload.success,
+                product: action.payload.product
+            }
+        case CREATE_PRODUCT_FAIL:
+            return {
+                ...state,
+                loading: false,
+                error: action.payload
+            }
+        case CREATE_PRODUCT_RESET:
+            return {
+                ...state,
+                success: false
             }
         case CLEAR_ERRORS:
             return {

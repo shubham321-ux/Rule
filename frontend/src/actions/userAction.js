@@ -47,9 +47,9 @@ export const register = (formData) => async (dispatch) => {
 
         const config = {
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "multipart/form-data",  // Important for file uploads
             },
-            withCredentials: true,  // Make sure this is set to allow cookies to be sent
+            withCredentials: true,  // Ensure cookies (like JWT) are sent with the request
         };
 
         const { data } = await axios.post(`${API_URL}api/v1/register/user`, formData, config);
@@ -59,7 +59,6 @@ export const register = (formData) => async (dispatch) => {
         dispatch({ type: REGISTER_FAIL, payload: errorMessage });
     }
 };
-
 
 //load user
 export const loadUser = () => async (dispatch) => {

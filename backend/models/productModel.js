@@ -13,7 +13,7 @@ const productSchema = new mongoose.Schema({
     price: {
         type: Number,
         required: [true, "please enter price"],
-        max: [8, "price cannot exceed 8 digits"]
+        // max: [8, "price cannot exceed 8 digits"]
     },
     rating: {
         type: Number,
@@ -29,6 +29,17 @@ const productSchema = new mongoose.Schema({
             required: true
         }
     }],
+    productPDF: {
+        public_id: {
+            type: String
+        },
+        url: {
+            type: String
+        },
+        filename: {
+            type: String
+        }
+    },
     category: {
         type: String,
         required: [true, "please enter product category"]
@@ -36,7 +47,7 @@ const productSchema = new mongoose.Schema({
     stock: {
         type: Number,
         required: [true, "please enter stock"],
-        max: [4, "stock cannot exceed 4 digits"]
+        // max: [4, "stock cannot exceed 4 digits"]
     },
     numOfReviews: {
         type: Number,
@@ -67,6 +78,5 @@ const productSchema = new mongoose.Schema({
     }
 });
 
-
 const Product = mongoose.model('Product', productSchema);
- export default Product
+export default Product;
