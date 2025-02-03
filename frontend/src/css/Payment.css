@@ -1,0 +1,24 @@
+.success-container {
+    text-align: center;
+    padding: 2rem;
+}
+
+.success-container h2 {
+    color: #2ecc71;
+    margin-bottom: 1rem;
+}
+
+.download-button {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 1rem 2rem;
+    background: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.download-button:hover {
+    background: #2980b9;
+}

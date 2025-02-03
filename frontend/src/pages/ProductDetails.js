@@ -1,27 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getProductDetails } from '../actions/productAction'; // Import the addToCart action
+import { getProductDetails } from '../actions/productAction';
 import { addToCart } from '../actions/cartaction';
 import { useParams } from 'react-router-dom';
-import ReactStars from 'react-stars'
+import ReactStars from 'react-stars';
+import Payment from '../payment/Payment';
 
 const ProductDetails = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
     const { product, loading, error } = useSelector((state) => state.productDetails);
-
-    const [quantity, setQuantity] = useState(1); // State for quantity
+    const [quantity, setQuantity] = useState(1);
+    const [showPayment, setShowPayment] = useState(false);
+    const [pdfUrl, setPdfUrl] = useState(null);
 
     useEffect(() => {
         dispatch(getProductDetails(id));
     }, [dispatch, id]);
 
     const handleAddToCart = () => {
-     dispatch(addToCart(id, quantity)); 
+        dispatch(addToCart(id, quantity));
     };
 
-    const handleAddReview = () => {
-        // Add functionality to navigate to the review form or open a modal
+    const handleBuyNow = () => {
+        setShowPayment(true);
+    };
+
+    const handlePaymentSuccess = (downloadUrl) => {
+        setPdfUrl(downloadUrl);
+        setShowPayment(false);
     };
 
     const incrementQuantity = () => {
@@ -40,56 +47,91 @@ const ProductDetails = () => {
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div>
-            <h1>Product Details</h1>
-            <h2>{product?.name}</h2>
-            <h3>rating:<ReactStars
-                edit={false}
-                value={product?.ratings}
-                count={5}
-                size={24}
-                color2={'#ffd700'}
-            />
-            </h3>
-            <p>Price: ${product?.price}</p>
-            <p>Description: {product?.description}</p>
-            <p>Category: {product?.category}</p>
+        <div className="product-details">
+            <h1>{product?.name}</h1>
+            <div className="rating">
+                <ReactStars
+                    edit={false}
+                    value={product?.ratings}
+                    count={5}
+                    size={24}
+                    color2={'#ffd700'}
+                />
+            </div>
+           
+            <p className="price">₹{product?.price}</p>
+            <p className="description">{product?.description}</p>
+            <p className="category">Category: {product?.category}</p>
 
-            <div>
+            <div className="quantity-controls">
                 <button onClick={decrementQuantity} disabled={quantity <= 1}>-</button>
                 <span>{quantity}</span>
                 <button onClick={incrementQuantity} disabled={quantity >= product?.stock}>+</button>
             </div>
 
-            <button
-                onClick={handleAddToCart}
-                style={{ backgroundColor: product?.stock > 0 ? 'green' : 'red', color: 'white' }}
-                disabled={product?.stock === 0}
-            >
-                {product?.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
-            </button>
-            {product?.review && product?.review[0] ? (
-                <div>
-                    {product.review?.map((rev) => (
+            <div className="action-buttons">
+                <button
+                    onClick={handleAddToCart}
+                    className={`cart-button ${product?.stock === 0 ? 'disabled' : ''}`}
+                    disabled={product?.stock === 0}
+                >
+                    {product?.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                </button>
 
-                        <div key={rev._id}>
+                <button
+                    onClick={handleBuyNow}
+                    className="buy-button"
+                    disabled={product?.stock === 0}
+                >
+                    Buy Now
+                </button>
+            </div>
+
+            {showPayment && (
+                <div className="payment-modal">
+                    <Payment
+                        product={product}
+                        onSuccess={handlePaymentSuccess}
+                    />
+                </div>
+            )}
+
+            {pdfUrl && (
+                <div className="download-section">
+                    <h3>Your Purchase is Complete!</h3>
+                    <p>You can now download your PDF</p>
+                    <a
+                        href={pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="download-button"
+                    >
+                        Download PDF
+                    </a>
+                </div>
+            )}
+
+            <div className="reviews-section">
+                <h2>Reviews</h2>
+                {product?.reviews && product.reviews.length > 0 ? (
+                    product.reviews.map((rev) => (
+                        <div key={rev._id} className="review-card">
                             <img src={rev.avatar} alt="avatar" />
-                            <p>{rev.name}</p>
-                            <p>{rev.comment}</p>
+                            <p className="reviewer-name">{rev.name}</p>
+                            <p className="review-comment">{rev.comment}</p>
                             <ReactStars
                                 edit={false}
-                                value={rev?.ratings}
+                                value={rev.rating}
                                 count={5}
                                 size={24}
-                                color2={'#ffd700'} />
+                                color2={'#ffd700'}
+                            />
                         </div>
-                    ))}
-                </div>
-            ) : " no review yet "}
-
-            <button onClick={handleAddReview}>
-                Add Review
-            </button>
+                    ))
+                ) : (
+                    <p>No reviews yet</p>
+                )}
+            </div>
         </div>
     );
 };

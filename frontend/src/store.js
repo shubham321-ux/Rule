@@ -1,11 +1,19 @@
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import { thunk } from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
-
+import { paymentReducer } from "./reducers/paymentreducer";
 // Import reducers
 import { productReducers, productDetailReducers, createProductReducer } from "./reducers/productreducers";
 import { cartReducer } from "./reducers/cartreducer";
 import { userReducer } from "./reducers/userreducers";
+import {
+    newOrderReducer,
+    myOrdersReducer,
+    orderDetailsReducer,
+    allOrdersReducer,
+    orderReducer
+} from './reducers/orderreducers';
+
 
 const reducer = combineReducers({
   products: productReducers,
@@ -13,6 +21,12 @@ const reducer = combineReducers({
   user: userReducer,
   createProduct: createProductReducer,
   cart: cartReducer,
+  payment: paymentReducer,
+  newOrder: newOrderReducer,
+  myOrders: myOrdersReducer,
+  orderDetails: orderDetailsReducer,
+  allOrders: allOrdersReducer,
+  order: orderReducer
 });
 
 // Load user from localStorage
