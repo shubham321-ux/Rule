@@ -28,12 +28,22 @@ export const processPayment = (productId) => async (dispatch) => {
             config
         );
 
-        dispatch({ type: PROCESS_PAYMENT_SUCCESS, payload: data });
+        dispatch({ 
+            type: PROCESS_PAYMENT_SUCCESS, 
+            payload: {
+                success: data.success,
+                sessionId: data.sessionId,
+                paymentDetails: data
+            }
+        });
+
+        return data;
     } catch (error) {
         dispatch({
             type: PROCESS_PAYMENT_FAIL,
             payload: error.response.data.message
         });
+        throw error;
     }
 };
 
@@ -48,16 +58,29 @@ export const confirmPayment = (productId) => async (dispatch) => {
 
         const { data } = await axios.post(
             `${API_URL}api/v1/payment/confirm`,
-            { productId },
+            { 
+                productId,
+                paymentStatus: 'success'
+            },
             config
         );
 
-        dispatch({ type: CONFIRM_PAYMENT_SUCCESS, payload: data });
+        dispatch({ 
+            type: CONFIRM_PAYMENT_SUCCESS, 
+            payload: {
+                success: data.success,
+                pdfUrl: data.pdfUrl,
+                paymentDetails: data
+            }
+        });
+
+        return data;
     } catch (error) {
         dispatch({
             type: CONFIRM_PAYMENT_FAIL,
             payload: error.response.data.message
         });
+        throw error;
     }
 };
 
@@ -74,12 +97,21 @@ export const getPdfAccess = (productId) => async (dispatch) => {
             config
         );
 
-        dispatch({ type: GET_PDF_ACCESS_SUCCESS, payload: data });
+        dispatch({ 
+            type: GET_PDF_ACCESS_SUCCESS, 
+            payload: {
+                success: data.success,
+                pdfUrl: data.pdfUrl
+            }
+        });
+
+        return data;
     } catch (error) {
         dispatch({
             type: GET_PDF_ACCESS_FAIL,
             payload: error.response.data.message
         });
+        throw error;
     }
 };
 

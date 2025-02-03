@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken"
 import User from "../models/userModel.js"
 export const isauthenticatedUser = async (req, res, next) => {
+    console.log("isauthenticatedUser middleware called");
     const { token } = req.cookies;  // Getting the token from cookies
 
     // If there is no token, return a 401 error with a message

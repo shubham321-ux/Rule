@@ -9,6 +9,8 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
+import paymentRouter from './routes/paymentRoute.js';
+import VerifyEmailrouter from './routes/verifyemailRoute.js';
 
 // ES Module fix for __dirname
 const currentFilePath = fileURLToPath(import.meta.url);
@@ -42,7 +44,8 @@ app.use('/uploads', express.static(path.join(currentDirPath, 'uploads')));
 app.use("/api/v1", productrouter);
 app.use("/api/v1", userrouter);
 app.use("/api/v1", orderrouter);
-
+app.use("/api/v1",paymentRouter)
+app.use("/api/vi",VerifyEmailrouter)
 app.get("/", (req, res) => {
     res.send("hello");
 });

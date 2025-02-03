@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
+import { API_URL } from "../config/config";
 import Header from "../components/Header";
 import "../css/LoginPage.css";
 import { login, register } from "../actions/userAction";
+import axios from 'axios'; // Import axios for API calls
 
 const Login = () => {
     const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const Login = () => {
         password: "",
         avatar: null // Add avatar property to track the file
     });
+    const [alertMessage, setAlertMessage] = useState(null);
 
     const handleLoginChange = (e) => {
         setLoginData({
@@ -45,22 +47,29 @@ const Login = () => {
         });
     };
 
-    const submitLogin = (e) => {
+    const submitLogin = async (e) => {
         e.preventDefault();
-        dispatch(login(loginData.email, loginData.password)); 
+        const response = await dispatch(login(loginData.email, loginData.password));
         if (isAuthenticated) {
             console.log("Login successful!");
+            // Reset login form fields
+            setLoginData({
+                email: "",
+                password: ""
+            });
+            // Navigate to home page
             navigation("/");
         } else {
             console.log("Login failed.");
+            // setAlertMessage(response.message); // Set the error message in alert
         }
     };
 
-    const submitRegister = (e) => {
+    const submitRegister = async (e) => {
         e.preventDefault();
-    
+
         const { name, email, password, avatar } = registerData;
-    
+
         const formData = new FormData();
         formData.append("name", name);
         formData.append("email", email);
@@ -68,17 +77,40 @@ const Login = () => {
         if (avatar) {
             formData.append("avatar", avatar);  // Make sure 'avatar' is the correct field name in multer
         }
-    
-        // Dispatch the action with FormData
-        dispatch(register(formData));
-        if (isAuthenticated) {
-            console.log("Registration successful!");
-            navigation("/");
-        } else {
-            console.log("Registration failed.");
+
+        try {
+            // Get the response from the register action
+            const response = await dispatch(register(formData));
+
+            // Check if the response has a success property
+            if (response && response.success) {
+                console.log("Registration successful!");
+                // Reset registration form fields
+                setRegisterData({
+                    name: "",
+                    email: "",
+                    password: "",
+                    avatar: null
+                });
+                // Navigate to home page
+                navigation("/");
+            } else {
+                // If the response doesn't have success, show the message
+                console.log("Registration failed.");
+                setAlertMessage(response ? response.message : "An error occurred.");
+            }
+        } catch (error) {
+            console.error("Registration error:", error);
+            setAlertMessage("Registration failed. Please try again later.");
         }
-        
     };
+
+    // Redirect if already authenticated
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigation("/");
+        }
+    }, [isAuthenticated, navigation]);
 
     return (
         <>
@@ -105,6 +137,11 @@ const Login = () => {
                                     </div>
                                 </div>
                                 <div className="form-body">
+                                    {alertMessage && (
+                                        <div className="alert alert-danger">
+                                            {alertMessage}
+                                        </div>
+                                    )}
                                     {isLogin ? (
                                         <form onSubmit={submitLogin}>
                                             <div className="mb-4">

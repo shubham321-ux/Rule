@@ -10,7 +10,7 @@ const LogoutButton = () => {
 
     const LogoutFun = () => {
         dispatch(logout());
-        navigate('/login');  // Redirect to login page after logout
+        navigate('/login');  
     };
 
     return <>

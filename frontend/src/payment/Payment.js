@@ -10,10 +10,10 @@ const Payment = ({ product, onSuccess }) => {
     const [showDownload, setShowDownload] = useState(false);
     const [pdfData, setPdfData] = useState(null);
     const { loading } = useSelector(state => state.payment);
-    const paymentStatus = useSelector(state => state.payment);
-   const [afterpaymentdata, setAfterpaymentdata] = useState();
+    const paymentStatus = useSelector(state => state.payment?.paymentDetails);
+
     useEffect(() => {
-        if (paymentStatus.success && paymentStatus.pdfUrl) {
+        if (paymentStatus?.success && paymentStatus?.pdfUrl) {
             setPdfData(paymentStatus.pdfUrl);
             setShowDownload(true);
         }
@@ -21,36 +21,71 @@ const Payment = ({ product, onSuccess }) => {
 
     const handlePayment = async () => {
         try {
+            // Step 1: Get Razorpay order details from backend
             const processResult = await dispatch(processPayment(product._id));
-            
-            if (processResult?.payload?.success) {
-                const confirmResult = await dispatch(confirmPayment(product._id));
-                
-                if (confirmResult?.payload?.success && confirmResult?.payload?.pdfUrl) {
-                    setPdfData(confirmResult.payload.pdfUrl);
-                    setShowDownload(true);
-                    
-                    const orderResult = await dispatch(newOrder({
-                        productId: product._id,
-                        orderItems: [{
-                            name: product.name,
-                            price: product.price,
-                            product: product._id,
-                            quantity: 1
-                        }],
-                        itemsPrice: product.price,
-                        taxPrice: product.price * 0.18,
-                        totalPrice: product.price * 1.18
-                    }));
 
-                    if (orderResult?.payload?.success) {
-                        onSuccess(confirmResult.payload.pdfUrl);
+            if (processResult?.success) {
+                const { orderId, amount } = processResult;  // Get the orderId and amount from backend
+
+                // Step 2: Open Razorpay payment modal
+                const options = {
+                    key: process.env.REACT_APP_RAZORPAY_KEY_ID, // Your Razorpay key ID
+                    amount: amount * 100, // Amount in paise
+                    currency: 'INR',
+                    name: 'Product Payment',
+                    description: product.name,
+                    order_id: orderId,
+                    handler: async function (response) {
+                        // Step 3: On successful payment, confirm the payment on the backend
+                        const confirmResult = await dispatch(confirmPayment({
+                            productId: product._id,
+                            paymentStatus: 'success',
+                            razorpayPaymentId: response.razorpay_payment_id,
+                            razorpayOrderId: response.razorpay_order_id,
+                            razorpaySignature: response.razorpay_signature
+                        }));
+
+                        if (confirmResult?.success && confirmResult?.pdfUrl) {
+                            setPdfData(confirmResult.pdfUrl);
+                            setShowDownload(true);
+
+                            const orderResult = await dispatch(newOrder({
+                                productId: product._id,
+                                orderItems: [{
+                                    name: product.name,
+                                    price: product.price,
+                                    product: product._id,
+                                    quantity: 1
+                                }],
+                                itemsPrice: product.price,
+                                taxPrice: product.price * 0.18,
+                                totalPrice: product.price * 1.18
+                            }));
+
+                            if (orderResult?.success) {
+                                onSuccess(confirmResult.pdfUrl); // Call the onSuccess callback
+                            }
+                        }
+                    },
+                    prefill: {
+                        name: 'Customer Name',
+                        email: 'customer@example.com',
+                        contact: '1234567890'
+                    },
+                    notes: {
+                        address: 'Customer Address'
+                    },
+                    theme: {
+                        color: '#F37254'
                     }
-                }
+                };
+
+                const razorpay = new window.Razorpay(options);
+                razorpay.open();
             }
         } catch (error) {
             console.log('Payment failed:', error.message);
-            alert(error.message);
+            alert('Payment failed: ' + error.message);
         }
     };
 
@@ -124,7 +159,7 @@ const Payment = ({ product, onSuccess }) => {
                                 >
                                     Download PDF
                                 </a>
-                                <button 
+                                <button
                                     className="view-button"
                                     onClick={() => window.open(pdfData, '_blank')}
                                 >

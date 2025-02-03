@@ -13,7 +13,6 @@ const productSchema = new mongoose.Schema({
     price: {
         type: Number,
         required: [true, "please enter price"],
-        // max: [8, "price cannot exceed 8 digits"]
     },
     rating: {
         type: Number,
@@ -47,7 +46,6 @@ const productSchema = new mongoose.Schema({
     stock: {
         type: Number,
         required: [true, "please enter stock"],
-        // max: [4, "stock cannot exceed 4 digits"]
     },
     numOfReviews: {
         type: Number,
@@ -70,6 +68,25 @@ const productSchema = new mongoose.Schema({
         comment: {
             type: String,
             required: true
+        }
+    }],
+    purchases: [{
+        user: {
+            type: mongoose.Schema.ObjectId,
+            ref: "User",
+            required: true
+        },
+        paymentStatus: {
+            type: String,
+            enum: ['pending', 'completed'],
+            default: 'pending'
+        },
+        paymentId: {
+            type: String
+        },
+        purchaseDate: {
+            type: Date,
+            default: Date.now
         }
     }],
     createdAt: {
