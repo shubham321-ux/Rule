@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const orderSchema = new mongoose.Schema({
     shippingInfo: {
         address: {
@@ -66,39 +67,58 @@ const orderSchema = new mongoose.Schema({
         paidAt: {
             type: Date,
             required: true
-            },
         },
-        itemPrice:{
-            type: Number,
-            required: true,
-            default: 0
+    },
+    itemPrice: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    taxPrice: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    shippingPrice: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    totalPrice: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    orderStatus: {
+        type: String,
+        required: true,
+        default: "Processing"
+    },
+    deliveredAt: Date,
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+  
+    pdf: {  
+        url: {
+            type: String,  
+            required: false
         },
-        taxPrice: {
-            type: Number,
-            required: true,
-            default: 0
-        },
-        shippingPrice: {
-            type: Number,
-            required: true,
-            default: 0
-        },
-        totalPrice: {
-            type: Number,
-            required: true,
-            default: 0
-        },
-        orderStatus: {
+        fileName: {
             type: String,
-            required: true,
-            default: "Processing"
+            required: false
         },
-        deliveredAt: Date,
-        createdAt: {
-            type: Date,
-            default: Date.now
+        size: {
+            type: Number, 
+            required: false
+        },
+        contentType: {
+            type: String,  
+            required: false
         }
     }
-)
- const Order = mongoose.model("Order", orderSchema);
- export default Order;
+});
+
+const Order = mongoose.model("Order", orderSchema);
+export default Order;

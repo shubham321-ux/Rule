@@ -5,6 +5,7 @@ import { addToCart } from '../actions/cartaction';
 import { useParams } from 'react-router-dom';
 import ReactStars from 'react-stars';
 import Payment from '../payment/Payment';
+import CreateReview from '../components/CreateReview';
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -13,38 +14,57 @@ const ProductDetails = () => {
     const [quantity, setQuantity] = useState(1);
     const [showPayment, setShowPayment] = useState(false);
     const [pdfUrl, setPdfUrl] = useState(null);
-
+    const[showReview,setShowReview] = useState(false);
+    // Fetch product details using the `getProductDetails` action
     useEffect(() => {
         dispatch(getProductDetails(id));
     }, [dispatch, id]);
 
+    // Handle adding product to cart
     const handleAddToCart = () => {
         dispatch(addToCart(id, quantity));
     };
 
+    // Handle Buy Now action (trigger payment)
     const handleBuyNow = () => {
         setShowPayment(true);
     };
 
+    // Handle payment success (e.g., if the product has a PDF to download)
     const handlePaymentSuccess = (downloadUrl) => {
-        setPdfUrl(downloadUrl);
-        setShowPayment(false);
+        if (product.paymentPaid === true) {
+            setPdfUrl(downloadUrl); // Set PDF URL if payment is successful
+            setShowPayment(false); // Close payment modal
+        }
     };
 
+    // Increment product quantity
     const incrementQuantity = () => {
         if (product?.stock > quantity) {
             setQuantity(quantity + 1);
         }
     };
 
+    // Decrement product quantity
     const decrementQuantity = () => {
         if (quantity > 1) {
             setQuantity(quantity - 1);
         }
     };
 
+    // Trigger download if PDF is available and payment is successful
+    useEffect(() => {
+        if (product?.productPDF && product?.paymentPaid === true) {
+            setPdfUrl(product.productPDF);
+        }
+    }, [product]);
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
+
+    const showReviewFun=()=>{
+        setShowReview(!showReview);
+    }
 
     return (
         <div className="product-details">
@@ -52,13 +72,12 @@ const ProductDetails = () => {
             <div className="rating">
                 <ReactStars
                     edit={false}
-                    value={product?.ratings}
+                    value={product?.rating}
                     count={5}
                     size={24}
                     color2={'#ffd700'}
                 />
             </div>
-           
             <p className="price">₹{product?.price}</p>
             <p className="description">{product?.description}</p>
             <p className="category">Category: {product?.category}</p>
@@ -78,15 +97,19 @@ const ProductDetails = () => {
                     {product?.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
                 </button>
 
-                <button
-                    onClick={handleBuyNow}
-                    className="buy-button"
-                    disabled={product?.stock === 0}
-                >
-                    Buy Now
-                </button>
+                {/* Show Buy Now button only if the product is in stock and payment hasn't been made */}
+                {!product.paymentPaid && product?.stock > 0 && (
+                    <button
+                        onClick={handleBuyNow}
+                        className="buy-button"
+                        disabled={product?.stock === 0}
+                    >
+                        Buy Now
+                    </button>
+                )}
             </div>
 
+            {/* Display payment modal if `showPayment` is true */}
             {showPayment && (
                 <div className="payment-modal">
                     <Payment
@@ -95,8 +118,14 @@ const ProductDetails = () => {
                     />
                 </div>
             )}
+            {product?.paymentPaid && pdfUrl && (<button
+            onClick={()=>showReviewFun()}>
+                Add Review
+            </button>)}
+            {showReview && <CreateReview productId={product?._id}/>}
 
-            {pdfUrl && (
+            {/* Show download section only if payment has been made */}
+            {product?.paymentPaid && pdfUrl && (
                 <div className="download-section">
                     <h3>Your Purchase is Complete!</h3>
                     <p>You can now download your PDF</p>

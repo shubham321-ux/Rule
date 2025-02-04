@@ -11,20 +11,24 @@ import path from 'path';
 import fs from 'fs';
 import paymentRouter from './routes/paymentRoute.js';
 import VerifyEmailrouter from './routes/verifyemailRoute.js';
-
+import dotenv from 'dotenv'; 
 // ES Module fix for __dirname
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirPath = dirname(currentFilePath);
-
+dotenv.config({path:"./config/.env"});
 const app = express();
 
 // Enable CORS with specific options
 app.use(cors({
-    origin: 'http://localhost:3001',
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    origin: process.env.FRONTEND_URL,  // Allow your frontend
+    credentials: true,  // Allow credentials (cookies, etc.)
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // Allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],  // Allowed headers
 }));
+
+// Handling OPTIONS requests explicitly if needed
+app.options('*', cors());  // Allow preflight OPTIONS requests
+
 
 // Create uploads directory using the correct path
 const uploadDir = path.join(currentDirPath, 'uploads');

@@ -2,15 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { API_URL } from "../config/config";
+import { login, register } from "../actions/userAction";
 import Header from "../components/Header";
 import "../css/LoginPage.css";
-import { login, register } from "../actions/userAction";
-import axios from 'axios'; // Import axios for API calls
 
 const Login = () => {
     const dispatch = useDispatch();
-    const { isAuthenticated, user } = useSelector((state) => state.user);
+    const { isAuthenticated } = useSelector((state) => state.user);
     const navigation = useNavigate();
     const [isLogin, setIsLogin] = useState(true);
     const [loginData, setLoginData] = useState({
@@ -21,7 +19,7 @@ const Login = () => {
         name: "",
         email: "",
         password: "",
-        avatar: null // Add avatar property to track the file
+        avatar: null
     });
     const [alertMessage, setAlertMessage] = useState(null);
 
@@ -39,76 +37,43 @@ const Login = () => {
         });
     };
 
-    // Handle file input change for avatar
     const handleFileChange = (e) => {
         setRegisterData({
             ...registerData,
-            avatar: e.target.files[0] // Store the selected file in state
+            avatar: e.target.files[0]
         });
     };
 
     const submitLogin = async (e) => {
         e.preventDefault();
-        const response = await dispatch(login(loginData.email, loginData.password));
-        if (isAuthenticated) {
-            console.log("Login successful!");
-            // Reset login form fields
-            setLoginData({
-                email: "",
-                password: ""
-            });
-            // Navigate to home page
-            navigation("/");
-        } else {
-            console.log("Login failed.");
-            // setAlertMessage(response.message); // Set the error message in alert
+        try {
+            await dispatch(login(loginData.email, loginData.password));
+        } catch (error) {
+            setAlertMessage(error.message || "An error occurred during login.");
         }
     };
 
     const submitRegister = async (e) => {
         e.preventDefault();
-
         const { name, email, password, avatar } = registerData;
-
         const formData = new FormData();
         formData.append("name", name);
         formData.append("email", email);
         formData.append("password", password);
         if (avatar) {
-            formData.append("avatar", avatar);  // Make sure 'avatar' is the correct field name in multer
+            formData.append("avatar", avatar);
         }
 
         try {
-            // Get the response from the register action
-            const response = await dispatch(register(formData));
-
-            // Check if the response has a success property
-            if (response && response.success) {
-                console.log("Registration successful!");
-                // Reset registration form fields
-                setRegisterData({
-                    name: "",
-                    email: "",
-                    password: "",
-                    avatar: null
-                });
-                // Navigate to home page
-                navigation("/");
-            } else {
-                // If the response doesn't have success, show the message
-                console.log("Registration failed.");
-                setAlertMessage(response ? response.message : "An error occurred.");
-            }
+            await dispatch(register(formData));
         } catch (error) {
-            console.error("Registration error:", error);
-            setAlertMessage("Registration failed. Please try again later.");
+            setAlertMessage(error.message || "An error occurred during registration.");
         }
     };
 
-    // Redirect if already authenticated
     useEffect(() => {
         if (isAuthenticated) {
-            navigation("/");
+            navigation("/");  // Redirect to home page after successful login
         }
     }, [isAuthenticated, navigation]);
 

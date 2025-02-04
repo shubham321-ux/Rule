@@ -59,8 +59,10 @@ export const createProduct = async (req, res) => {
 
 
 // get products 
+// Get All Products
+// Get All Products
 export const getAllProducts = async (req, res, next) => {
-    const resultPerPage = 4; 
+    const resultPerPage = 10;
     const currentPage = Number(req.query.page) || 1; // Current page from query or default to 1
 
     try {
@@ -77,6 +79,20 @@ export const getAllProducts = async (req, res, next) => {
             .limit(resultPerPage) // Limit to the number of products per page
             .skip(resultPerPage * (currentPage - 1)); // Skip products for previous pages
 
+        // Loop through products and check the payment status for each product
+        for (const product of products) {
+            // Check if any purchase has the paymentStatus as 'completed'
+            const userHasPaid = product.purchases.some(
+                (purchase) => purchase.paymentStatus === 'completed'
+            );
+
+            // If the product has not been paid for, remove the productPDF
+            if (!userHasPaid) {
+                product.productPDF = null;
+            }
+        }
+
+        // Calculate total products and total pages for pagination
         const totalProducts = await Product.countDocuments(); // Get total products count
         const totalPages = Math.ceil(totalProducts / resultPerPage); // Calculate total pages
 
@@ -94,20 +110,60 @@ export const getAllProducts = async (req, res, next) => {
 
 
 
+
+
 //get product details
+// Get Product Details
+// Get Product Details
 export const getProductDetails = async (req, res, next) => {
-    const product = await Product.findById(req.params.id)
-    if (!product) {
+    try {
+    
+        
+        // Find product by ID
+        const product = await Product.findById(req.params.id);
+
+        // If product does not exist, return 404 error
+        if (!product) {
+            return res.status(404).json({
+                message: "Product not found",
+                success: false
+            });
+        }
+
+        // Clone the product to avoid modifying the original Mongoose document
+        const productData = product.toObject();
+
+        // Check if the user has completed the payment for this product
+        const userHasPaid = product.purchases.some(
+            (purchase) => purchase.user.toString() === req.user._id.toString() && purchase.paymentStatus === 'completed'
+        );
+
+        console.log("User has paid:", userHasPaid);
+
+        // Conditionally set the productPDF to null if payment is not completed
+        if (!userHasPaid) {
+            productData.productPDF = null; // Set the productPDF to null if the user hasn't paid
+        }
+
+        // Send back the full product details (with the modified productPDF if necessary)
+        res.status(200).json({
+            success: true,
+            product: {...productData,paymentPaid:userHasPaid} // Return the product details (with or without the productPDF)
+        });
+
+    } catch (error) {
+        console.error("Error fetching product details:", error);
         res.status(500).json({
-            message: "product not found",
-            success: false
-        })
+            success: false,
+            message: "Error fetching product details",
+            error: error.message
+        });
     }
-    res.status(200).json({
-        success: true,
-        product
-    })
-}
+};
+
+
+
+
 
 
 
@@ -184,8 +240,12 @@ export const deleteProduct = async (req, res) => {
 
 //create review and update review
 export const createProductReview = async (req, res, next) => {
+    console.log("Request body:", req.body);
+    console.log("Request headers:", req.headers);  // Add this to see if Content-Type is correct
+
     try {
         const { rating, comment, productId } = req.body;
+        console.log("Rating:", rating, "Comment:", comment, "ProductId:", productId);  // Log each piece of data
 
         if (!rating || !productId) {
             return res.status(400).json({

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { createProduct } from "../actions/productAction";
-
+import Header from '../components/Header';
 const CreateProduct = () => {
     const dispatch = useDispatch();
     const [formData, setFormData] = useState({
@@ -88,6 +88,7 @@ const CreateProduct = () => {
 
     return (
         <div className="create-product-container">
+            <Header/>
             <h2>Create New Product</h2>
             <form onSubmit={handleSubmit} className="product-form" encType="multipart/form-data">
                 <div className="form-group">

@@ -21,50 +21,58 @@ const Payment = ({ product, onSuccess }) => {
 
     const handlePayment = async () => {
         try {
-            // Step 1: Get Razorpay order details from backend
             const processResult = await dispatch(processPayment(product._id));
-
+    
             if (processResult?.success) {
-                const { orderId, amount } = processResult;  // Get the orderId and amount from backend
+                const { orderId, amount } = processResult;
 
-                // Step 2: Open Razorpay payment modal
                 const options = {
-                    key: process.env.REACT_APP_RAZORPAY_KEY_ID, // Your Razorpay key ID
-                    amount: amount * 100, // Amount in paise
+                    key: "rzp_test_woOuBFt9737Rqq",
+                    amount: amount * 100, // Convert to paise
                     currency: 'INR',
                     name: 'Product Payment',
                     description: product.name,
                     order_id: orderId,
                     handler: async function (response) {
-                        // Step 3: On successful payment, confirm the payment on the backend
-                        const confirmResult = await dispatch(confirmPayment({
-                            productId: product._id,
-                            paymentStatus: 'success',
-                            razorpayPaymentId: response.razorpay_payment_id,
-                            razorpayOrderId: response.razorpay_order_id,
-                            razorpaySignature: response.razorpay_signature
-                        }));
-
-                        if (confirmResult?.success && confirmResult?.pdfUrl) {
-                            setPdfData(confirmResult.pdfUrl);
-                            setShowDownload(true);
-
-                            const orderResult = await dispatch(newOrder({
+                        try {
+                            const confirmResult = await dispatch(confirmPayment({
                                 productId: product._id,
-                                orderItems: [{
-                                    name: product.name,
-                                    price: product.price,
-                                    product: product._id,
-                                    quantity: 1
-                                }],
-                                itemsPrice: product.price,
-                                taxPrice: product.price * 0.18,
-                                totalPrice: product.price * 1.18
+                                razorpayPaymentId: response.razorpay_payment_id,
+                                razorpayOrderId: response.razorpay_order_id,
+                                razorpaySignature: response.razorpay_signature,
+                                paymentStatus: 'success' // Add status as 'success'
                             }));
-
-                            if (orderResult?.success) {
-                                onSuccess(confirmResult.pdfUrl); // Call the onSuccess callback
+    
+                            console.log("Confirm Payment Response:", confirmResult);
+    
+                            if (confirmResult?.success && confirmResult?.pdfUrl) {
+                                setPdfData(confirmResult.pdfUrl);
+                                setShowDownload(true);
+    
+                                const orderResult = await dispatch(newOrder({
+                                    productId: product._id,
+                                    orderItems: [{
+                                        name: product.name,
+                                        price: product.price,
+                                        product: product._id,
+                                        quantity: 1
+                                    }],
+                                    itemsPrice: product.price,
+                                    taxPrice: product.price * 0.18,
+                                    totalPrice: product.price * 1.18
+                                }));
+    
+                                if (orderResult?.success) {
+                                    onSuccess(confirmResult.pdfUrl);
+                                } else {
+                                    alert("Order creation failed!");
+                                }
+                            } else {
+                                alert("Payment confirmation failed!");
                             }
+                        } catch (error) {
+                            console.error("Error during payment confirmation:", error);
+                            alert('Payment confirmation failed: ' + error.message);
                         }
                     },
                     prefill: {
@@ -79,7 +87,7 @@ const Payment = ({ product, onSuccess }) => {
                         color: '#F37254'
                     }
                 };
-
+    
                 const razorpay = new window.Razorpay(options);
                 razorpay.open();
             }

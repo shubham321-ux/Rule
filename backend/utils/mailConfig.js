@@ -5,8 +5,8 @@ export const verifyEmail = async (req, res) => {
     try {
         const { email } = req.body;
 
-        // Your Hunter.io API Key (store it in environment variables for security)
-        const apiKey = process.env.HUNTER_API_KEY; // Set this in .env file
+        
+        const apiKey = "2fb88446891a43c8fad4b535b60ee831da066f24"; 
         const url = `https://api.hunter.io/v2/email-verifier`;
 
         const response = await axios.get(url, {

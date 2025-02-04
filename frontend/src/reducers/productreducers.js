@@ -9,6 +9,10 @@ import {
     CREATE_PRODUCT_SUCCESS,
     CREATE_PRODUCT_FAIL,
     CREATE_PRODUCT_RESET,
+    CREATE_REVIEW_REQUEST,
+    CREATE_REVIEW_SUCCESS,
+    CREATE_REVIEW_FAIL,
+    CREATE_REVIEW_RESET,
     CLEAR_ERRORS
 
 } from '../constants/productConstant.js'
@@ -104,3 +108,36 @@ export const createProductReducer = (state = {}, action) => {
             return state
     }
 }
+
+export const createReviewReducer = (state = { review: {} }, action) => {
+    switch (action.type) {
+        case CREATE_REVIEW_REQUEST:
+            return {
+                ...state,
+                loading: true
+            };
+        case CREATE_REVIEW_SUCCESS:
+            return {
+                loading: false,
+                success: true,
+                review: action.payload  // Review data returned from the API
+            };
+        case CREATE_REVIEW_FAIL:
+            return {
+                loading: false,
+                error: action.payload  // Error message returned if the API call fails
+            };
+        case CREATE_REVIEW_RESET:
+            return {
+                ...state,
+                success: false  // Reset success flag after review submission
+            };
+        case CLEAR_ERRORS:
+            return {
+                ...state,
+                error: null  // Clear error messages from the state
+            };
+        default:
+            return state;
+    }
+};

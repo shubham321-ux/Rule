@@ -3,10 +3,10 @@ import Razorpay from 'razorpay';
 import mongoose from 'mongoose';
 import crypto from 'crypto';
 import dotenv from "dotenv"
-dotenv.config();
+dotenv.config({path:"./config/.env"});
 const razorpay = new Razorpay({
-    key_id: "rzp_test_woOuBFt9737Rqq",
-    key_secret: "IiFszKnO6CmxV4wFBS9YDW6R"
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 export const processPayment = async (req, res) => {
@@ -72,9 +72,19 @@ export const processPayment = async (req, res) => {
 
 export const confirmPayment = async (req, res) => {
     try {
-        console.log("Request body:", req.body);  // Log the request body for debugging
-        const { productId, paymentStatus, razorpayPaymentId, razorpayOrderId, razorpaySignature } = req.body;
-        
+        // Log the request body for debugging
+        console.log("Request body:", req.body);
+
+        const { 
+            productId: { 
+                productId, 
+                razorpayPaymentId, 
+                razorpayOrderId, 
+                razorpaySignature, 
+                paymentStatus 
+            } 
+        } = req.body;
+
         // Validate productId
         if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
             return res.status(400).json({
@@ -91,12 +101,15 @@ export const confirmPayment = async (req, res) => {
             });
         }
 
-        // Verify payment signature with Razorpay
+        // Verify Razorpay signature
         const body = razorpayOrderId + "|" + razorpayPaymentId;
         const expectedSignature = crypto
-            .createHmac('sha256', 'YOUR_RAZORPAY_KEY_SECRET')
+            .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
             .update(body)
             .digest('hex');
+        
+        console.log('Received Signature:', razorpaySignature);
+        console.log('Expected Signature:', expectedSignature);
 
         if (expectedSignature !== razorpaySignature) {
             return res.status(400).json({
@@ -105,11 +118,8 @@ export const confirmPayment = async (req, res) => {
             });
         }
 
-        console.log("Payment confirmed on track.......");
-
-        // Retrieve the product by its ID
+        // Retrieve the product
         const product = await Product.findById(productId);
-
         if (!product) {
             return res.status(404).json({
                 success: false,
@@ -117,7 +127,7 @@ export const confirmPayment = async (req, res) => {
             });
         }
 
-        // Check if the product PDF is available
+        // Ensure the PDF is available only after payment confirmation
         if (!product.productPDF || !product.productPDF.url) {
             return res.status(400).json({
                 success: false,
@@ -125,12 +135,13 @@ export const confirmPayment = async (req, res) => {
             });
         }
 
-        // Check for existing purchase
+        // Check if the user has already purchased the product
         const existingPurchase = product.purchases.find(
             (p) => p.user.toString() === req.user._id.toString()
         );
 
         if (existingPurchase) {
+            console.log("User has already purchased this product, returning PDF URL.");
             return res.status(200).json({
                 success: true,
                 pdfUrl: product.productPDF.url,
@@ -138,16 +149,15 @@ export const confirmPayment = async (req, res) => {
             });
         }
 
-        // Add a new purchase record
+        // Record the purchase after successful payment
         product.purchases.push({
             user: req.user._id,
-            paymentStatus: 'completed',  // Update the status to 'completed' upon confirmation
-            paymentId: razorpayPaymentId,
+            paymentStatus: 'completed',
+            paymentId: razorpayPaymentId
         });
 
-        // Save the updated product with the new purchase record
         const savedProduct = await product.save();
-        console.log("Purchase recorded successfully");
+        console.log("Purchase recorded successfully.");
 
         res.status(200).json({
             success: true,
@@ -162,6 +172,7 @@ export const confirmPayment = async (req, res) => {
         });
     }
 };
+
 
 export const getPdfAccess = async (req, res) => {
     try {

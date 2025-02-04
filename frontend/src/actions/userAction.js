@@ -19,7 +19,7 @@ import {
 
     CLEAR_ERRORS
 } from "../constants/userConstant.js";
-import { CLEAR_CART } from "../constants/cartConstanat.js";
+import { CLEAR_CART } from "../constants/cartConstant.js";
 import axios from "axios";
 import { API_URL } from '../config/config.js';
 
@@ -38,8 +38,10 @@ export const login = (email, password) => async (dispatch) => {
     } catch (error) {
         const errorMessage = error.response ? error.response.data.message : error.message;
         dispatch({ type: LOGIN_FAIL, payload: errorMessage });
+        alert(errorMessage); 
     }
 };
+
 
 
 //register action 
@@ -49,18 +51,30 @@ export const register = (formData) => async (dispatch) => {
 
         const config = {
             headers: {
-                "Content-Type": "multipart/form-data",  // Important for file uploads
+                "Content-Type": "multipart/form-data", // Important for file uploads
             },
-            withCredentials: true,  // Ensure cookies (like JWT) are sent with the request
+            withCredentials: true, // Ensure cookies (like JWT) are sent with the request
         };
 
         const { data } = await axios.post(`${API_URL}api/v1/register/user`, formData, config);
         dispatch({ type: REGISTER_SUCCESS, payload: data });
     } catch (error) {
-        const errorMessage = error.response ? error.response.data.message : error.message;
-        dispatch({ type: REGISTER_FAIL, payload: errorMessage });
+        // Log the full error object for better insight
+        console.error("Register action error:", error);
+
+        // Check if the error response is available and log its structure
+        if (error.response) {
+            console.log("Error response:", error.response);
+            alert(error.response.data.message);
+            const errorMessage = error.response.data.message || "An error occurred during registration";
+            dispatch({ type: REGISTER_FAIL, payload: errorMessage });
+        } else {
+            const errorMessage = error.message || "An error occurred during registration";
+            dispatch({ type: REGISTER_FAIL, payload: errorMessage });
+        }
     }
 };
+
 
 //load user
 export const loadUser = () => async (dispatch) => {

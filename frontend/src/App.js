@@ -15,7 +15,7 @@ import ForgotPasswordForm from "./components/ForgotPasswordForm";
 import ResetPasswordForm from "./components/ResetPasswordForm";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import CreateProduct from "./dashboard/Createproduct";
-
+import Myorders from "./pages/Myorders";
 function App() {
   useEffect(() => {
     store.dispatch(loadUser());
@@ -50,6 +50,7 @@ function App() {
               </AdminProtectedRoute>
             }
           />
+         <Route path="/myorders" element={<ProtectedRoute> <Myorders /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </>

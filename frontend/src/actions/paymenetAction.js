@@ -47,7 +47,7 @@ export const processPayment = (productId) => async (dispatch) => {
     }
 };
 
-export const confirmPayment = (productId) => async (dispatch) => {
+export const confirmPayment = (productId, razorpayPaymentId, razorpayOrderId, razorpaySignature) => async (dispatch) => {
     try {
         dispatch({ type: CONFIRM_PAYMENT_REQUEST });
 
@@ -56,10 +56,14 @@ export const confirmPayment = (productId) => async (dispatch) => {
             withCredentials: true
         };
 
+        // Send all necessary data for payment confirmation
         const { data } = await axios.post(
             `${API_URL}api/v1/payment/confirm`,
             { 
                 productId,
+                razorpayPaymentId,
+                razorpayOrderId,
+                razorpaySignature,
                 paymentStatus: 'success'
             },
             config
@@ -83,6 +87,7 @@ export const confirmPayment = (productId) => async (dispatch) => {
         throw error;
     }
 };
+
 
 export const getPdfAccess = (productId) => async (dispatch) => {
     try {

@@ -10,6 +10,7 @@ import upload from "../multer/multer.js"
 // Register user
 // In your controller (userController.js)
 
+
 export const registeruser = async (req, res, next) => {
     try {
         const { name, email, password } = req.body;
@@ -24,11 +25,10 @@ export const registeruser = async (req, res, next) => {
 
         let avatar = null;
         if (req.file) {
-            // Create full URL for the avatar
             const baseUrl = `${req.protocol}://${req.get('host')}`;
             avatar = {
                 public_id: req.file.filename,
-                url: `${baseUrl}/uploads/${req.file.filename}`, // Full URL path
+                url: `${baseUrl}/uploads/${req.file.filename}`,
             };
         }
 
@@ -42,12 +42,23 @@ export const registeruser = async (req, res, next) => {
         sendToken(user, 201, res);
     } catch (error) {
         console.error("Error registering user:", error);
+
+        if (error.name === 'ValidationError') {
+            const validationError = error.errors[Object.keys(error.errors)[0]]; // Get the first validation error
+            return res.status(400).json({
+                success: false,
+                message: validationError.message, // Send only the specific validation error message
+            });
+        }
+
         return res.status(500).json({
             message: "Server Error",
             error: error.message || error,
         });
     }
 };
+
+
 
 
 
