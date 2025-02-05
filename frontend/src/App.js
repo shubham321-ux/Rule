@@ -2,7 +2,7 @@ import logo from "./logo.svg";
 import "./App.css";
 import Header from "./components/Header";
 import Home from "./pages/Home";
-import { BrowserRouter, browserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Products from "./pages/Products";
 import ProductDetails from "./pages/ProductDetails";
 import Login from "./pages/LoginPage";
@@ -16,44 +16,30 @@ import ResetPasswordForm from "./components/ResetPasswordForm";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import CreateProduct from "./dashboard/Createproduct";
 import Myorders from "./pages/Myorders";
+import DashboardHome from "./dashboard/DashboardHome";
+import FavoriteProducts from './components/FavoriteProducts';
+
 function App() {
   useEffect(() => {
     store.dispatch(loadUser());
   }, []);
+
   const { isAuthenticated, user } = useSelector((state) => state.user);
-  console.log("user", user);
+
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route
-            path="/products"
-            element={
-              <ProtectedRoute>
-                <Products />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/product/:id" element={<ProtectedRoute><ProductDetails /></ProtectedRoute>} />
-          <Route path="/Login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPasswordForm />} />
-          <Route
-            path="/password-reset/:token"
-            element={<ResetPasswordForm />}
-          />
-          <Route
-            path="/create-product"
-            element={
-              <AdminProtectedRoute>
-                <CreateProduct />
-              </AdminProtectedRoute>
-            }
-          />
-         <Route path="/myorders" element={<ProtectedRoute> <Myorders /></ProtectedRoute>} />
-        </Routes>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
+        <Route path="/product/:id" element={<ProtectedRoute><ProductDetails /></ProtectedRoute>} />
+        <Route path="/Login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+        <Route path="/password-reset/:token" element={<ResetPasswordForm />} />
+        <Route path="/create-product" element={<AdminProtectedRoute><DashboardHome /></AdminProtectedRoute>} />
+        <Route path="/myorders" element={<ProtectedRoute><Myorders /></ProtectedRoute>} />
+        <Route path="/favorite-products" element={<ProtectedRoute><FavoriteProducts /></ProtectedRoute>} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

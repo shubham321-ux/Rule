@@ -14,6 +14,12 @@ import {
     CREATE_REVIEW_REQUEST,
     CREATE_REVIEW_SUCCESS,
     CREATE_REVIEW_FAIL,
+    UPDATE_PRODUCT_FAIL,
+    UPDATE_PRODUCT_SUCCESS,
+    UPDATE_PRODUCT_REQUEST,
+    DELETE_PRODUCT_FAIL,
+    DELETE_PRODUCT_SUCCESS,
+    DELETE_PRODUCT_REQUEST,
     CLEAR_ERRORS
 } from '../constants/productConstant.js'
 
@@ -91,13 +97,64 @@ export const createProduct = (productData) => async (dispatch) => {
         const { data } = await axios.post(`${API_URL}api/v1/product/new`, productData,config);
         dispatch({ type: ALL_PRODUCT_SUCCESS, payload: data || [], productsCount: data.productsCount || 0 });
         dispatch({ type: CREATE_PRODUCT_SUCCESS, payload: data });
+        
     } catch (error) {
         dispatch({ type: ALL_PRODUCT_FAIL, payload: error.response.data.message });
         dispatch({ type: CREATE_PRODUCT_FAIL, payload: error.response.data.message });
     }
 };
 
-// actions/productAction.js
+// Update product
+export const updateProduct = (id, productData) => async (dispatch) => {
+    try {
+        dispatch({ type: UPDATE_PRODUCT_REQUEST });
+
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            withCredentials: true, // Ensure cookies are sent along with the request
+        };
+
+        const { data } = await axios.put(`${API_URL}api/v1/product/update/${id}`, productData, config);
+
+        dispatch({
+            type: UPDATE_PRODUCT_SUCCESS,
+            payload: data,
+        });
+    } catch (error) {
+        const errorMessage = error.response ? error.response.data.message : error.message;
+        dispatch({
+            type: UPDATE_PRODUCT_FAIL,
+            payload: errorMessage,
+        });
+    }
+};
+
+// Delete product
+export const deleteProduct = (id) => async (dispatch) => {
+    try {
+        dispatch({ type: DELETE_PRODUCT_REQUEST });
+
+        const config = {
+            withCredentials: true, // Ensure cookies are sent along with the request
+        };
+
+        await axios.delete(`${API_URL}api/v1/product/delete/${id}`, config);
+
+        dispatch({
+            type: DELETE_PRODUCT_SUCCESS,
+            payload: id,
+        });
+    } catch (error) {
+        const errorMessage = error.response ? error.response.data.message : error.message;
+        dispatch({
+            type: DELETE_PRODUCT_FAIL,
+            payload: errorMessage,
+        });
+    }
+};
+
 
 
 // Action for creating a product review

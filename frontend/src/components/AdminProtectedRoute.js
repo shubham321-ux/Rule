@@ -1,19 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
+import Loading from './Loading';
 const AdminProtectedRoute = ({ children }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
+  const [loading, setLoading] = useState(true);
 
-  console.log("User", user);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 500);
 
-  // If not authenticated or the user is not an admin, redirect to login page
-  if (!isAuthenticated || user.role !== "admin") {
-    alert("Please log in first and ensure you have admin access.");
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <Loading/>; 
+  }
+
+  if (!isAuthenticated || user?.user.role !== "admin") {
     return <Navigate to="/login" replace />;
   }
 
-  // If user is authenticated and is an admin, allow access to the protected route
   return children;
 };
 

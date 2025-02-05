@@ -98,7 +98,7 @@ const ProductDetails = () => {
                 </button>
 
                 {/* Show Buy Now button only if the product is in stock and payment hasn't been made */}
-                {!product.paymentPaid && product?.stock > 0 && (
+                {!product.paymentPaid  && (
                     <button
                         onClick={handleBuyNow}
                         className="buy-button"

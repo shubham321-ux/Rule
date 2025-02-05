@@ -7,8 +7,8 @@ import { Apifeatures } from "../utils/apifeature.js"
 // Create Product
 export const createProduct = async (req, res) => {
     try {
-        const { name, description, price, category, stock } = req.body;
-
+        const { name, description, price, category, stock,  author } = req.body;
+ console.log(name, description, price, category, stock,  author)
         // Handle images
         let images = [];
         if (req.files && req.files.images) {
@@ -37,6 +37,7 @@ export const createProduct = async (req, res) => {
             price,
             category,
             stock,
+            author,
             images,
             productPDF // Include this in creation
         });
@@ -63,44 +64,44 @@ export const createProduct = async (req, res) => {
 // Get All Products
 export const getAllProducts = async (req, res, next) => {
     const resultPerPage = 10;
-    const currentPage = Number(req.query.page) || 1; // Current page from query or default to 1
+    const currentPage = Number(req.query.page) || 1;
 
     try {
-        // Building the query based on filters
-        const keyword = req.query.keyword ? {
+        const keywordFilter = req.query.keyword ? {
             name: {
                 $regex: req.query.keyword,
                 $options: "i"
             }
         } : {};
 
-        // Fetching the products with filtering, pagination, and sorting
-        const products = await Product.find({ ...keyword })
-            .limit(resultPerPage) // Limit to the number of products per page
-            .skip(resultPerPage * (currentPage - 1)); // Skip products for previous pages
+        const categoryFilter = req.query.category ? {
+            category: req.query.category
+        } : {};
 
-        // Loop through products and check the payment status for each product
+        const filter = { ...keywordFilter, ...categoryFilter };
+
+        const products = await Product.find(filter)
+            .limit(resultPerPage)
+            .skip(resultPerPage * (currentPage - 1));
+
         for (const product of products) {
-            // Check if any purchase has the paymentStatus as 'completed'
             const userHasPaid = product.purchases.some(
                 (purchase) => purchase.paymentStatus === 'completed'
             );
 
-            // If the product has not been paid for, remove the productPDF
             if (!userHasPaid) {
                 product.productPDF = null;
             }
         }
 
-        // Calculate total products and total pages for pagination
-        const totalProducts = await Product.countDocuments(); // Get total products count
-        const totalPages = Math.ceil(totalProducts / resultPerPage); // Calculate total pages
+        const totalProducts = await Product.countDocuments(filter);
+        const totalPages = Math.ceil(totalProducts / resultPerPage);
 
         res.status(200).json({
             message: "Route is working",
             products,
             totalPages,
-            currentPage // Optional: return the current page for client use
+            currentPage
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -180,12 +181,20 @@ export const updateProduct = async (req, res) => {
 
         // Handle new images if uploaded
         if (req.files && req.files['images']) {
+            // Ensure that `req.files.images` is always an array (in case only one image is uploaded)
+            const files = Array.isArray(req.files['images']) ? req.files['images'] : [req.files['images']];
+            
             const baseUrl = `${req.protocol}://${req.get('host')}`;
-            const newImages = req.files['images'].map(file => ({
+            const newImages = files.map(file => ({
                 public_id: file.filename,
                 url: `${baseUrl}/uploads/${file.filename}`
             }));
-            req.body.images = newImages;
+
+            // If there are no images uploaded, set an empty array
+            req.body.images = newImages.length > 0 ? newImages : [];
+        } else {
+            // If no images are uploaded, ensure images is an empty array
+            req.body.images = [];
         }
 
         // Handle new PDF if uploaded
@@ -199,6 +208,7 @@ export const updateProduct = async (req, res) => {
             };
         }
 
+        // Update the product with the new data
         product = await Product.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true,
@@ -218,6 +228,8 @@ export const updateProduct = async (req, res) => {
         });
     }
 };
+
+
 
 
 

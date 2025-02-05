@@ -37,15 +37,21 @@ const productSchema = new mongoose.Schema({
         },
         filename: {
             type: String
-        }
+        },
+      
     },
     category: {
         type: String,
         required: [true, "please enter product category"]
     },
+    author:{
+        type: String,
+        required: [true, "please enter product author"]
+    },
     stock: {
         type: Number,
-        required: [true, "please enter stock"],
+        default: 1,
+        required: [false, "please enter stock"],
     },
     numOfReviews: {
         type: Number,

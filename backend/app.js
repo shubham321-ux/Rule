@@ -12,6 +12,9 @@ import fs from 'fs';
 import paymentRouter from './routes/paymentRoute.js';
 import VerifyEmailrouter from './routes/verifyemailRoute.js';
 import dotenv from 'dotenv'; 
+import categoryrouter from './routes/categoryRoute.js';
+import favoriteRouter from './routes/fevoritebooksRoute.js';
+
 // ES Module fix for __dirname
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirPath = dirname(currentFilePath);
@@ -49,7 +52,9 @@ app.use("/api/v1", productrouter);
 app.use("/api/v1", userrouter);
 app.use("/api/v1", orderrouter);
 app.use("/api/v1",paymentRouter)
-app.use("/api/vi",VerifyEmailrouter)
+app.use("/api/v1",VerifyEmailrouter)
+app.use("/api/v1",categoryrouter)
+app.use("/api/v1",favoriteRouter)
 app.get("/", (req, res) => {
     res.send("hello");
 });
