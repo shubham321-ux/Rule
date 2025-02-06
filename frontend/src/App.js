@@ -3,11 +3,11 @@ import "./App.css";
 import Header from "./components/Header";
 import Home from "./pages/Home";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Products from "./pages/Products";
+import Products from "./pages/Products"
 import ProductDetails from "./pages/ProductDetails";
 import Login from "./pages/LoginPage";
 import { loadUser } from "./actions/userAction";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import store from "./store";
 import { useSelector } from "react-redux";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -18,11 +18,18 @@ import CreateProduct from "./dashboard/Createproduct";
 import Myorders from "./pages/Myorders";
 import DashboardHome from "./dashboard/DashboardHome";
 import FavoriteProducts from './components/FavoriteProducts';
-
+import { getCategories } from "./actions/categoryAction";
+import { getProduct } from "./actions/productAction";
 function App() {
-  useEffect(() => {
+  useMemo(() => {
     store.dispatch(loadUser());
+    store.dispatch(getProduct(1));
+    console.log("added")
   }, []);
+
+  useMemo(()=>{
+    store.dispatch(getCategories())
+  },[])
 
   const { isAuthenticated, user } = useSelector((state) => state.user);
 
@@ -30,7 +37,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
+        <Route path="/products" element={<ProtectedRoute><Products/></ProtectedRoute>} />
         <Route path="/product/:id" element={<ProtectedRoute><ProductDetails /></ProtectedRoute>} />
         <Route path="/Login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPasswordForm />} />

@@ -130,7 +130,7 @@ const ProductDetails = () => {
                     <h3>Your Purchase is Complete!</h3>
                     <p>You can now download your PDF</p>
                     <a
-                        href={pdfUrl}
+                        href={pdfUrl?.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="download-button"

@@ -6,9 +6,10 @@ import { Apifeatures } from "../utils/apifeature.js"
 
 // Create Product
 export const createProduct = async (req, res) => {
+
     try {
         const { name, description, price, category, stock,  author } = req.body;
- console.log(name, description, price, category, stock,  author)
+ 
         // Handle images
         let images = [];
         if (req.files && req.files.images) {
@@ -63,50 +64,80 @@ export const createProduct = async (req, res) => {
 // Get All Products
 // Get All Products
 export const getAllProducts = async (req, res, next) => {
-    const resultPerPage = 10;
+    const resultPerPage = 1;
     const currentPage = Number(req.query.page) || 1;
-
+   console.log("page count",currentPage)
     try {
+        // Keyword filter for name and description
         const keywordFilter = req.query.keyword ? {
-            name: {
-                $regex: req.query.keyword,
-                $options: "i"
-            }
+            $or: [
+                { name: { $regex: req.query.keyword, $options: "i" } },
+                { description: { $regex: req.query.keyword, $options: "i" } }
+            ]
         } : {};
 
+        // Category filter
         const categoryFilter = req.query.category ? {
-            category: req.query.category
+            category: { $regex: req.query.category, $options: "i" }
         } : {};
 
-        const filter = { ...keywordFilter, ...categoryFilter };
+        // Price range filter
+        const priceFilter = {};
+        if (req.query.minPrice) priceFilter.$gte = Number(req.query.minPrice);
+        if (req.query.maxPrice) priceFilter.$lte = Number(req.query.maxPrice);
+        const priceRangeFilter = Object.keys(priceFilter).length > 0 ? { price: priceFilter } : {};
 
+        // Combine all filters
+        const filter = {
+            ...keywordFilter,
+            ...categoryFilter,
+            ...priceRangeFilter
+        };
+
+        // Sort options
+        const sort = {};
+        if (req.query.sort) {
+            const [field, order] = req.query.sort.split(':');
+            sort[field] = order === 'desc' ? -1 : 1;
+        }
+
+        // Fetch products with filters and pagination
         const products = await Product.find(filter)
+            .sort(sort)
             .limit(resultPerPage)
             .skip(resultPerPage * (currentPage - 1));
 
+        // Handle PDF access based on purchase status
         for (const product of products) {
             const userHasPaid = product.purchases.some(
                 (purchase) => purchase.paymentStatus === 'completed'
             );
-
             if (!userHasPaid) {
                 product.productPDF = null;
             }
         }
 
+        // Get total number of products matching the filter
         const totalProducts = await Product.countDocuments(filter);
         const totalPages = Math.ceil(totalProducts / resultPerPage);
-
+         console.log("total pages ",totalPages)
         res.status(200).json({
-            message: "Route is working",
+            success: true,
             products,
             totalPages,
-            currentPage
+            currentPage,
+            resultPerPage,
+            filteredProductsCount: products.length,
+            totalProducts
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
 };
+
 
 
 
@@ -130,7 +161,6 @@ export const getProductDetails = async (req, res, next) => {
                 success: false
             });
         }
-
         // Clone the product to avoid modifying the original Mongoose document
         const productData = product.toObject();
 

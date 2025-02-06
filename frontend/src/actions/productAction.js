@@ -24,33 +24,34 @@ import {
 } from '../constants/productConstant.js'
 
 //get all products
-export const getProduct = (page = 1, keyword = "") => async (dispatch) => {
+export const getProduct = (page = 1, keyword = "", category = "") => async (dispatch) => {
     try {
         dispatch({ type: ALL_PRODUCT_REQUEST });
 
-        // Configuration to send cookies along with the request for authentication
         const config = {
-            withCredentials: true,  // Ensure cookies (authentication token) are sent along with the request
+            withCredentials: true,
         };
 
-        // Making the request to fetch products, passing the page and keyword parameters
         const { data } = await axios.get(
-            `${API_URL}api/v1/products?page=${page}&keyword=${keyword}`,
-            config // Add the config with credentials here
+            `${API_URL}api/v1/products?page=${page}&keyword=${keyword}&category=${category}`,
+            config
         );
 
-        // Dispatch success action with the fetched data and products count
         dispatch({
             type: ALL_PRODUCT_SUCCESS,
-            payload: data.products || [], 
-            productsCount: data.productsCount || 0
+            payload: data.products || [],
+            productsCount: data.totalProducts|| 0,
+            totalpages: data.totalPages || 0,
+            resultPerPage: data.resultPerPage || 0,
+            currentPage: data.currentPage || 0,
         });
     } catch (error) {
-        // Dispatch failure action with error message if the API request fails
         const errorMessage = error.response ? error.response.data.message : error.message;
         dispatch({ type: ALL_PRODUCT_FAIL, payload: errorMessage });
     }
 };
+
+
 
 
 
