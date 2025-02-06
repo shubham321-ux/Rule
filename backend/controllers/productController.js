@@ -64,7 +64,7 @@ export const createProduct = async (req, res) => {
 // Get All Products
 // Get All Products
 export const getAllProducts = async (req, res, next) => {
-    const resultPerPage = 1;
+    const resultPerPage = 10;
     const currentPage = Number(req.query.page) || 1;
    console.log("page count",currentPage)
     try {

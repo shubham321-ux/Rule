@@ -14,7 +14,7 @@ const Myorders = () => {
   const { orders, loading, error } = useSelector((state) => state.myOrders);
   const [myallorders, setMyallorders] = useState([]);
 
-  // Using useMemo for performance optimization (although it's not needed for simple cases like this)
+ 
   useMemo(() => {
     if (orders?.orders) {
       setMyallorders(orders.orders);
@@ -25,19 +25,18 @@ const Myorders = () => {
 
   return (
     <div>
-      <Header />
+      {/* <Header /> */}
       <h1>My Orders</h1>
 
-      {/* Display loading state */}
+     
       {loading && <p>Loading...</p>}
 
-      {/* Display error message */}
+     
       {error && <p style={{ color: "red" }}>{`Error: ${error.message || error}`}</p>}
 
-      {/* Check if there are no orders */}
+
       {orders && orders.length === 0 && !loading && <p>No orders found.</p>}
 
-      {/* If there are orders */}
       <div>
         {myallorders && myallorders.length > 0 ? (
           <ul>

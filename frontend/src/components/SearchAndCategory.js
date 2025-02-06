@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import "./css/SearchAndCategory.css"
+import { FaSearch } from 'react-icons/fa';
+
 const SearchAndCategory = ({ categories, onCategoryChange }) => {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState("");
@@ -30,41 +33,36 @@ const SearchAndCategory = ({ categories, onCategoryChange }) => {
     if (selectedCategory !== "All") params.set("category", selectedCategory);
     setSearchParams(params);
     navigate(`/products?${params.toString()}`);
+
+    // Clear the input box after submitting
+    setKeyword("");  // Reset keyword state to empty string
   };
 
   return (
-    <div>
-      <input
-        type="text"
-        placeholder="Search..."
-        value={keyword}
-        onChange={handleSearchChange}
-        style={{ marginBottom: "10px", padding: "8px", width: "200px" }}
-        required
-      />
-      <button
-        onClick={handleSearchSubmit}
-        style={{
-          padding: "8px 16px",
-          margin: "0 10px",
-          backgroundColor: "#4CAF50",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-        }}
-      >
-        Search
+    <div className="search-container-main">
+      <div className="search-container">
+        <div className="select-container">
+          <select onChange={handleCategoryChange} value={selectedCategory} style={{ padding: "8px", width: "200px" }}>
+            <option value="All">All</option>
+            {categories?.map((item) => (
+              <option key={item._id} value={item.name}>
+                {item.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <input
+          type="text"
+          placeholder="Search..."
+          value={keyword}
+          onChange={handleSearchChange}
+          className="input-field"
+          required
+        />
+      </div>
+      <button onClick={handleSearchSubmit} className="button">
+        <FaSearch color="#fff" size={18} />
       </button>
-
-      <select onChange={handleCategoryChange} value={selectedCategory} style={{ padding: "8px", width: "200px" }}>
-        <option value="All">All</option>
-        {categories?.map((item) => (
-          <option key={item._id} value={item.name}>
-            {item.name}
-          </option>
-        ))}
-      </select>
     </div>
   );
 };

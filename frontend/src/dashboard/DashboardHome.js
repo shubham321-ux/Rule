@@ -26,7 +26,7 @@ const DashboardHome = () => {
 
     return (
         <div>
-            <Header />
+            {/* <Header /> */}
             <h1>Welcome to Dashboard</h1>
             <button onClick={openCreateProductModal}>Create Product</button>
             <button onClick={openCreateCategoryModal}>Create Category</button>

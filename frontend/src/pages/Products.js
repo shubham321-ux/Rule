@@ -51,7 +51,7 @@ const Product = () => {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <h1>Products</h1>
 
       {/* <LogoutButton /> */}
@@ -103,7 +103,7 @@ const Product = () => {
         )}
       </div>
 
-      <div
+     {totalPages>1 && <div
         style={{
           marginTop: "20px",
           display: "flex",
@@ -125,7 +125,7 @@ const Product = () => {
         >
           Next Page
         </button>
-      </div>
+      </div>}
     </>
   );
 };

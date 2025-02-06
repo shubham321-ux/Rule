@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login, register } from "../actions/userAction";
 import Header from "../components/Header";
-import "../css/LoginPage.css";
+import "./css/LoginPage.css";
 import axios from "axios";  
 import { API_URL } from "../config/config";
 

@@ -101,6 +101,7 @@ const CreateProduct = () => {
       // Reset file inputs
       document.getElementById("imageInput").value = "";
       document.getElementById("pdfInput").value = "";
+      window.location.reload();
     } catch (error) {
       console.error("Error creating product:", error);
     }
@@ -168,7 +169,6 @@ const CreateProduct = () => {
             />
           </div>
         </div>
-
         {/* Product Category (Dropdown) */}
         <div className="form-group">
           <label>Category:</label>
