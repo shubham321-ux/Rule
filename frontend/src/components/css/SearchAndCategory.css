@@ -1,10 +1,11 @@
 .search-container-main{
     width: 100%;
     display: flex;
-    align-items: ce;
+    align-items: center;
+    justify-content: center;
 }
 .search-container {
-    width: 100% !important;
+    width: 50% !important;
     background-color: var(--secondary-color);
     display: flex;
     align-items: center;

@@ -1,0 +1,217 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.community-main-div {
+    width: 100%;
+    display: flex;
+    padding: var(--padding-main);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 64px;
+}
+
+.community-div1 {
+    display: flex;
+    padding: 44px 40px;
+    align-items: center;
+    justify-content: space-between;
+    align-self: stretch;
+    border-radius: 16px;
+    border: 4px solid #F9F5F0;
+    gap: 50px;
+}
+
+.community-div1-under {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 58px;
+    /* flex: 1 0 0; */
+}
+
+.main-head-community {
+    font-family: "Playfair Display", serif;
+    font-size: 40px;
+    font-weight: 400;
+    text-align: center;
+}
+
+.community-div1-under-div1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    align-self: stretch;
+}
+
+.community-stamp-img-div {
+    width: 102px;
+    height: 102px;
+    overflow: hidden;
+}
+
+.community-stamp-img-div img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.community-books-img-div {
+    max-width: 300px;
+    height: auto;
+}
+
+.community-books-img-div img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.community-div2-map {
+    display: flex;
+    padding: 0px 140px;
+    align-items: center;
+    gap: 40px;
+    align-self: stretch;
+}
+
+.community-div2-map-div {
+    display: flex;
+    padding: 20px 0px;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    flex: 1 0 0;
+}
+
+.community-div2-map-div-h1 {
+    font-family: "Playfair Display", serif;
+    font-size: 40px;
+    font-weight: 400;
+    line-height: 48px;
+    text-align: center;
+}
+
+@media screen and (max-width: 1200px) {
+    .community-div2-map {
+        padding: 0px 80px;
+        gap: 30px;
+    }
+    
+    .main-head-community,
+    .community-div2-map-div-h1 {
+        font-size: 36px;
+        line-height: 44px;
+    }
+
+    .community-books-img-div {
+        max-width: 250px;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .community-div2-map {
+        padding: 0px 40px;
+        flex-wrap: wrap;
+    }
+    
+    .community-div2-map-div {
+        flex: 1 0 calc(50% - 20px);
+    }
+
+    .community-books-img-div {
+        max-width: 200px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .community-main-div {
+        padding: 20px var(--padding-phone);
+        gap: 40px;
+    }
+    
+    .community-div1 {
+        padding: 32px 24px;
+        flex-direction: column;
+        gap: 30px;
+    }
+    
+    .main-head-community,
+    .community-div2-map-div-h1 {
+        font-size: 28px;
+        line-height: 36px;
+    }
+    
+    .community-div1-under {
+        gap: 30px;
+        width: 100%;
+    }
+    
+    .community-div2-map {
+        padding: 0px 20px;
+        gap: 24px;
+    }
+
+    .community-books-img-div {
+        max-width: 180px;
+        order: -1;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .community-main-div {
+        padding: 16px;
+        gap: 32px;
+    }
+    
+    .community-div1 {
+        padding: 20px;
+        gap: 24px;
+    }
+    
+    .main-head-community,
+    .community-div2-map-div-h1 {
+        font-size: 24px;
+        line-height: 32px;
+    }
+    
+    .community-stamp-img-div {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .community-div2-map {
+        padding: 0;
+        flex-direction: column;
+    }
+    
+    .community-div2-map-div {
+        flex: 1 0 100%;
+        padding: 16px 0;
+    }
+
+    .community-books-img-div {
+        max-width: 150px;
+    }
+
+    .community-div1-under {
+        gap: 24px;
+    }
+    .community-div2-map {
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+    
+    .community-div2-map-div {
+        padding: 12px;
+    }
+    
+    .community-div2-map-div-h1 {
+        font-size: 20px;
+        line-height: 28px;
+    }
+}

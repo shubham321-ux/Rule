@@ -1,8 +1,8 @@
 import React from "react";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../actions/userAction";
 import { useNavigate } from 'react-router-dom';
-
+import './css/LogoutButton.css';
 const LogoutButton = () => {
     const { isAuthenticated, user } = useSelector((state) => state.user);
     const dispatch = useDispatch();
@@ -13,9 +13,18 @@ const LogoutButton = () => {
         navigate('/login');  
     };
 
-    return <>
-    {isAuthenticated && <button onClick={LogoutFun}>Logout</button>}
-    </>
+    return (
+        <>
+            {isAuthenticated && (
+                <button 
+                    className="logout-button" 
+                    onClick={LogoutFun}
+                >
+                    Logout
+                </button>
+            )}
+        </>
+    );
 };
 
 export default LogoutButton;
