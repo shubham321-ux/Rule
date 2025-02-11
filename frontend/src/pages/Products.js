@@ -1,132 +1,179 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./css/Products.css";
-import Header from "../components/Header";
 import { getProduct } from "../actions/productAction";
-import { addToFavorites } from "../actions/favoritebooksAction";
 import { useSelector, useDispatch } from "react-redux";
 import { useSearchParams } from "react-router-dom";
-import LogoutButton from "../components/LogoutButton";
 import ProductCard from "../components/ProductCard";
-import SearchAndCategory from "../components/SearchAndCategory"; 
+import ProductFilter from "../components/ProductFilter";
+import { FaFilter, FaTimes } from 'react-icons/fa';
 
 const Product = () => {
   const dispatch = useDispatch();
-  const { products, loading, error, totalPages, currentPage } = useSelector((state) => state.products);
-  console.log("totale page",totalPages, currentPage);
-  const { user } = useSelector((state) => state.user);
-  const { favorites } = useSelector((state) => state.favorites);
+  const { products, loading, error, totalPages } = useSelector((state) => state.products);
   const { categories } = useSelector((state) => state.category);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // Correct usage of useSearchParams in react-router-dom v6+
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get("keyword") || "";
   const category = searchParams.get("category") || "";
 
+  const [filters, setFilters] = useState({
+    priceRange: { min: 0, max: 100 },
+    selectedCategories: [],
+    currentPage: 1
+  });
+
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
   useEffect(() => {
-    // Dispatch the action only when necessary: when the page changes or keyword/category changes
-    if ( currentPage === 1) {
+    dispatch(getProduct(
+      filters.currentPage,
+      keyword,
+      category,
+      filters.priceRange.min,
+      filters.priceRange.max,
+      filters.selectedCategories
+    ));
+  }, [dispatch, keyword, category, filters]);
 
-      dispatch(getProduct(currentPage, keyword, category));
-    }
-  }, [dispatch, currentPage, keyword, category, products.length]);
-
-  const handleAddToFavorites = (productId) => {
-    dispatch(addToFavorites(productId));
+  const handlePriceRangeChange = (min, max) => {
+    setFilters(prev => ({
+      ...prev,
+      priceRange: { min, max },
+      currentPage: 1
+    }));
   };
 
-  const isProductInFavorites = (productId) => {
-    return favorites.some((fav) => {
-      const favProductId = fav.product?._id || fav.product;
-      return favProductId === productId;
-    });
+  const handleCategoryChange = (selectedCategories) => {
+    setFilters(prev => ({
+      ...prev,
+      selectedCategories,
+      currentPage: 1
+    }));
+  };
+
+  const handleProductSelect = (product) => {
+    setSelectedProduct(product);
   };
 
   const handlePageChange = (direction) => {
-    if (direction === "next" && currentPage < totalPages) {
-      dispatch(getProduct(currentPage + 1, keyword, category)); // Fetch next page
-    } else if (direction === "previous" && currentPage > 1) {
-      dispatch(getProduct(currentPage - 1, keyword, category)); // Fetch previous page
+    const newPage = direction === "next" ? filters.currentPage + 1 : filters.currentPage - 1;
+    if (newPage >= 1 && newPage <= totalPages) {
+      setFilters(prev => ({ ...prev, currentPage: newPage }));
     }
   };
 
+  const toggleFilter = () => {
+    setIsFilterOpen(!isFilterOpen);
+  };
+
   return (
-    <>
-      {/* <Header /> */}
-      <h1>Products</h1>
+    <div className="products-page">
+      {/* Filter Overlay */}
+      <div 
+        className={`filter-overlay ${isFilterOpen ? 'active' : ''}`}
+        onClick={() => setIsFilterOpen(false)}
+      />
 
-      {/* <LogoutButton /> */}
+      <div className="main-content">
+        {/* Filter Sidebar */}
+        <aside className={`filter-sidebar ${isFilterOpen ? 'active' : ''}`}>
+          <div className="filter-header">
+            <h2>Filters</h2>
+            <button className="close-filter" onClick={() => setIsFilterOpen(false)}>
+              <FaTimes />
+            </button>
+          </div>
 
-      {/* <SearchAndCategory categories={categories} /> */}
+          <ProductFilter
+            initialPriceRange={filters.priceRange}
+            initialCategories={filters.selectedCategories}
+            onPriceRangeChange={handlePriceRangeChange}
+            onCategoryChange={handleCategoryChange}
+            categories={categories}
+          />
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-          gap: "1rem",
-        }}
-      >
-        {loading ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p>Error: {error}</p>
-        ) : products.length === 0 ? (
-          <p>No products found</p>
-        ) : (
-          products.map((product) => (
-            <div key={product._id} className="product-card">
-              <ProductCard product={product} />
-              {user && (
-                <button
-                  onClick={() => handleAddToFavorites(product._id)}
-                  disabled={isProductInFavorites(product._id)}
-                  style={{
-                    padding: "8px 16px",
-                    backgroundColor: isProductInFavorites(product._id)
-                      ? "#cccccc"
-                      : "#4CAF50",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: isProductInFavorites(product._id)
-                      ? "not-allowed"
-                      : "pointer",
-                    marginTop: "8px",
-                  }}
-                >
-                  {isProductInFavorites(product._id)
-                    ? "Added to Favorites"
-                    : "Add to Favorites"}
-                </button>
-              )}
+          {/* {selectedProduct && (
+            <div className="order-summary">
+              <h3>Order Summary</h3>
+              <div className="selected-product">
+                <img
+                  src={selectedProduct.images[0]?.url}
+                  alt={selectedProduct.name}
+                  className="product-thumbnail"
+                />
+                <div className="product-details">
+                  <h4>{selectedProduct.name}</h4>
+                  <p className="author">By {selectedProduct.author}</p>
+                  <p className="description">{selectedProduct.description}</p>
+                  <div className="price-section">
+                    <span className="price">₹{selectedProduct.price}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="total-section">
+                <div className="total-row">
+                  <span>Total Amount</span>
+                  <span className="total-price">₹{selectedProduct.price}</span>
+                </div>
+              </div>
+              <button className="checkout-button">Proceed to Checkout</button>
             </div>
-          ))
-        )}
+          )} */}
+        </aside>
+
+        {/* Filter Toggle Button */}
+        <button className="filter-toggle" onClick={toggleFilter}>
+          <FaFilter />
+        </button>
+
+        {/* Main Product Grid */}
+        <main className="product-container-main">
+          {loading ? (
+            <div className="loader">Loading...</div>
+          ) : error ? (
+            <div className="error-message">{error}</div>
+          ) : products.length === 0 ? (
+            <div className="no-products">No products found</div>
+          ) : (
+            <div className="products-grid">
+              {products.map((product) => (
+                <div
+                  key={product._id}
+                  className="product-card-wrapper"
+                  onClick={() => handleProductSelect(product)}
+                >
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </div>
+          )}
+        </main>
       </div>
 
-     {totalPages>1 && <div
-        style={{
-          marginTop: "20px",
-          display: "flex",
-          justifyContent: "space-between",
-          width: "200px",
-          marginLeft: "auto",
-          marginRight: "auto",
-        }}
-      >
-        <button
-          onClick={() => handlePageChange("previous")}
-          disabled={currentPage === 1 || loading}
-        >
-          Previous Page
-        </button>
-        <button
-          onClick={() => handlePageChange("next")}
-          disabled={currentPage === totalPages || loading}
-        >
-          Next Page
-        </button>
-      </div>}
-    </>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="pagination">
+          <button
+            className="pagination-button"
+            onClick={() => handlePageChange("previous")}
+            disabled={filters.currentPage === 1 || loading}
+          >
+            Previous
+          </button>
+          <span className="page-info">
+            Page {filters.currentPage} of {totalPages}
+          </span>
+          <button
+            className="pagination-button"
+            onClick={() => handlePageChange("next")}
+            disabled={filters.currentPage === totalPages || loading}
+          >
+            Next
+          </button>
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -39,7 +39,9 @@ export const favoriteReducer = (state = { favorites: [] }, action) => {
             return {
                 ...state,
                 loading: false,
-                favorites: state.favorites.filter(item => item._id !== action.payload)
+                favorites: state.favorites.filter(
+                    item => (item.product?._id || item.product) !== action.payload
+                )
             };
 
         case ADD_TO_FAVORITES_FAIL:

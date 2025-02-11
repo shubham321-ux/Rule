@@ -47,9 +47,11 @@ userrouter.put('/password/update', isauthenticatedUser, updatepassword);
 // Update user details - Protected (authentication required)
 userrouter.put('/user/update', isauthenticatedUser, userupdate);
 
+
+userrouter.get('/admin/user/:id', isauthenticatedUser, getSingleUser);
 // Admin routes
 userrouter.get('/admin/users', isauthenticatedUser, authorizeRolesadmin, getAllUsers);
-userrouter.get('/admin/user/:id', isauthenticatedUser, authorizeRolesadmin, getSingleUser);
+
 userrouter.post('/admin/updateUserRole', isauthenticatedUser, authorizeRolesadmin, updateUserRole);
 userrouter.delete('/admin/deleteUser/:id', isauthenticatedUser, authorizeRolesadmin, deleteuser);
 

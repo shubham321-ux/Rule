@@ -17,20 +17,25 @@ import {
     RESET_PASSWORD_REQUEST,
     RESET_PASSWORD_SUCCESS,
     RESET_PASSWORD_FAIL,
+    GET_USER_REQUEST,
+    GET_USER_SUCCESS,
+    GET_USER_FAIL,
 } from "../constants/userConstant.js";
 
-// userReducer
 export const userReducer = (state = { user: {} }, action) => {
     switch (action.type) {
         case LOGIN_REQUEST:
         case LOAD_USER_REQUEST:
+        case GET_USER_REQUEST:
             return { loading: true, user: {}, isAuthenticated: false };
 
         case LOGIN_SUCCESS:
         case LOAD_REGISTER_SUCCESS:
+        case GET_USER_SUCCESS:
             return { ...state, isAuthenticated: true, loading: false, user: action.payload };
 
         case LOGIN_FAIL:
+        case GET_USER_FAIL:
             return { loading: false, error: action.payload, user: null, isAuthenticated: false };
 
         case REGISTER_REQUEST:

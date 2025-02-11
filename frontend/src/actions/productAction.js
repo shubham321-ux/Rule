@@ -24,7 +24,7 @@ import {
 } from '../constants/productConstant.js'
 
 //get all products
-export const getProduct = (page = 1, keyword = "", category = "") => async (dispatch) => {
+export const getProduct = (page = 1, keyword = "", category = "", minPrice = "", maxPrice = "", selectedCategories = []) => async (dispatch) => {
     try {
         dispatch({ type: ALL_PRODUCT_REQUEST });
 
@@ -32,15 +32,35 @@ export const getProduct = (page = 1, keyword = "", category = "") => async (disp
             withCredentials: true,
         };
 
-        const { data } = await axios.get(
-            `${API_URL}api/v1/products?page=${page}&keyword=${keyword}&category=${category}`,
-            config
-        );
+        // Build query string with all filters
+        let queryString = `${API_URL}api/v1/products?page=${page}`;
+        
+        if (keyword) {
+            queryString += `&keyword=${keyword}`;
+        }
+        
+        if (category) {
+            queryString += `&category=${category}`;
+        }
+        
+        if (minPrice !== "") {
+            queryString += `&minPrice=${minPrice}`;
+        }
+        
+        if (maxPrice !== "") {
+            queryString += `&maxPrice=${maxPrice}`;
+        }
+        
+        if (selectedCategories.length > 0) {
+            queryString += `&categories=${selectedCategories.join(',')}`;
+        }
+
+        const { data } = await axios.get(queryString, config);
 
         dispatch({
             type: ALL_PRODUCT_SUCCESS,
             payload: data.products || [],
-            productsCount: data.totalProducts|| 0,
+            productsCount: data.totalProducts || 0,
             totalpages: data.totalPages || 0,
             resultPerPage: data.resultPerPage || 0,
             currentPage: data.currentPage || 0,
@@ -55,33 +75,51 @@ export const getProduct = (page = 1, keyword = "", category = "") => async (disp
 
 
 
+
 //get product details
-export const getProductDetails = (id) => async (dispatch) => {
+export const getProductDetails = (id, filters) => async (dispatch) => {
     try {
         dispatch({ type: PRODUCT_DETAILS_REQUEST });
 
         const config = {
-            withCredentials: true, // Ensure cookies (authentication token) are sent along with the request
+            withCredentials: true,
         };
 
-        const { data } = await axios.get(`${API_URL}api/v1/product/detail/${id}`, config);
+        // Build query parameters
+        let url = `${API_URL}api/v1/product/detail/${id}`;
+        const queryParams = [];
+
+        if (filters) {
+            if (filters.priceRange) {
+                queryParams.push(`priceRange=${filters.priceRange}`);
+            }
+            if (filters.minPrice) {
+                queryParams.push(`minPrice=${filters.minPrice}`);
+            }
+            if (filters.maxPrice) {
+                queryParams.push(`maxPrice=${filters.maxPrice}`);
+            }
+        }
+
+        if (queryParams.length > 0) {
+            url += `?${queryParams.join('&')}`;
+        }
+
+        const { data } = await axios.get(url, config);
 
         dispatch({
             type: PRODUCT_DETAILS_SUCCESS,
             payload: data.product,
         });
     } catch (error) {
-        const errorMessage =
-            error.response && error.response.data.message
-                ? error.response.data.message
-                : error.message;
-
+        const errorMessage = error.response?.data.message || error.message;
         dispatch({
             type: PRODUCT_DETAILS_FAIL,
             payload: errorMessage,
         });
     }
 };
+
 
 
 

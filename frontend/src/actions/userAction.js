@@ -16,6 +16,9 @@ import {
     RESET_PASSWORD_FAIL,
     RESET_PASSWORD_REQUEST,
     RESET_PASSWORD_SUCCESS,
+    GET_USER_FAIL,
+    GET_USER_REQUEST,
+    GET_USER_SUCCESS,
 
     CLEAR_ERRORS
 } from "../constants/userConstant.js";
@@ -167,5 +170,30 @@ export const resetPassword = (token, password) => async (dispatch) => {
       dispatch({ type: RESET_PASSWORD_FAIL, payload: errorMessage });
     }
   };
+
+//   /get user information
+export const getUserDetails = () => async (dispatch) => {
+    try {
+        dispatch({ type: GET_USER_REQUEST });
+
+        const config = {
+            withCredentials: true,  // Include cookies with request
+        };
+
+        const { data } = await axios.get(`${API_URL}api/v1/user/details`, config);
+
+        dispatch({ 
+            type: GET_USER_SUCCESS, 
+            payload: data.user 
+        });
+
+    } catch (error) {
+        const errorMessage = error.response ? error.response.data.message : error.message;
+        dispatch({ 
+            type: GET_USER_FAIL, 
+            payload: errorMessage 
+        });
+    }
+};
 
 

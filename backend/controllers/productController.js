@@ -1,14 +1,14 @@
 import express from "express"
 import Product from "../models/productModel.js"
 import { Apifeatures } from "../utils/apifeature.js"
-
+import User from "../models/userModel.js";
 
 
 // Create Product
 export const createProduct = async (req, res) => {
 
     try {
-        const { name, description, price, category, stock,  author } = req.body;
+        const { name, description, price, category,  author } = req.body;
  
         // Handle images
         let images = [];
@@ -19,7 +19,7 @@ export const createProduct = async (req, res) => {
                 url: `${baseUrl}/uploads/${file.filename}`
             }));
         }
-
+let stock=1
         // Handle PDF - Modified this part
         let productPDF = null;
         if (req.files && req.files.productPDF && req.files.productPDF[0]) {
@@ -66,9 +66,8 @@ export const createProduct = async (req, res) => {
 export const getAllProducts = async (req, res, next) => {
     const resultPerPage = 10;
     const currentPage = Number(req.query.page) || 1;
-   console.log("page count",currentPage)
+
     try {
-        // Keyword filter for name and description
         const keywordFilter = req.query.keyword ? {
             $or: [
                 { name: { $regex: req.query.keyword, $options: "i" } },
@@ -76,51 +75,31 @@ export const getAllProducts = async (req, res, next) => {
             ]
         } : {};
 
-        // Category filter
-        const categoryFilter = req.query.category ? {
-            category: { $regex: req.query.category, $options: "i" }
+        const categoryFilter = req.query.categories ? {
+            category: { $in: req.query.categories.split(',') }
         } : {};
 
-        // Price range filter
         const priceFilter = {};
-        if (req.query.minPrice) priceFilter.$gte = Number(req.query.minPrice);
-        if (req.query.maxPrice) priceFilter.$lte = Number(req.query.maxPrice);
-        const priceRangeFilter = Object.keys(priceFilter).length > 0 ? { price: priceFilter } : {};
+        if (req.query.minPrice) {
+            priceFilter.price = { $gte: Number(req.query.minPrice) };
+        }
+        if (req.query.maxPrice) {
+            priceFilter.price = { ...priceFilter.price, $lte: Number(req.query.maxPrice) };
+        }
 
-        // Combine all filters
         const filter = {
             ...keywordFilter,
             ...categoryFilter,
-            ...priceRangeFilter
+            ...priceFilter
         };
 
-        // Sort options
-        const sort = {};
-        if (req.query.sort) {
-            const [field, order] = req.query.sort.split(':');
-            sort[field] = order === 'desc' ? -1 : 1;
-        }
-
-        // Fetch products with filters and pagination
         const products = await Product.find(filter)
-            .sort(sort)
             .limit(resultPerPage)
             .skip(resultPerPage * (currentPage - 1));
 
-        // Handle PDF access based on purchase status
-        for (const product of products) {
-            const userHasPaid = product.purchases.some(
-                (purchase) => purchase.paymentStatus === 'completed'
-            );
-            if (!userHasPaid) {
-                product.productPDF = null;
-            }
-        }
-
-        // Get total number of products matching the filter
         const totalProducts = await Product.countDocuments(filter);
         const totalPages = Math.ceil(totalProducts / resultPerPage);
-         console.log("total pages ",totalPages)
+
         res.status(200).json({
             success: true,
             products,
@@ -137,6 +116,7 @@ export const getAllProducts = async (req, res, next) => {
         });
     }
 };
+
 
 
 
@@ -282,12 +262,8 @@ export const deleteProduct = async (req, res) => {
 
 //create review and update review
 export const createProductReview = async (req, res, next) => {
-    console.log("Request body:", req.body);
-    console.log("Request headers:", req.headers);  // Add this to see if Content-Type is correct
-
     try {
         const { rating, comment, productId } = req.body;
-        console.log("Rating:", rating, "Comment:", comment, "ProductId:", productId);  // Log each piece of data
 
         if (!rating || !productId) {
             return res.status(400).json({
@@ -301,6 +277,7 @@ export const createProductReview = async (req, res, next) => {
             name: req.user.name,
             rating: Number(rating),
             comment,
+            avatar: req.user.avatar.url // Add user avatar URL to review
         };
 
         const product = await Product.findById(productId);
@@ -321,6 +298,7 @@ export const createProductReview = async (req, res, next) => {
                 if (rev.user.toString() === req.user._id.toString()) {
                     rev.rating = rating;
                     rev.comment = comment;
+                    rev.avatar = req.user.avatar.url; // Update avatar on review edit
                 }
             });
         } else {
@@ -350,6 +328,7 @@ export const createProductReview = async (req, res, next) => {
         });
     }
 };
+
 
 //get all reviews of a product
 export const getProductReviews = async (req, res, next) => {

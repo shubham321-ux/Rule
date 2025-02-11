@@ -74,6 +74,10 @@ const productSchema = new mongoose.Schema({
         comment: {
             type: String,
             required: true
+        },
+        avatar: {
+            type: String,
+            required: true
         }
     }],
     purchases: [{

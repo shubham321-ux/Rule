@@ -35,7 +35,7 @@ export const createCategory = (name, description) => async (dispatch, getState) 
       { name, description },
       config
     );
-    alert(data.message)
+    // alert(data.message)
 
     dispatch({
       type: CREATE_CATEGORY_SUCCESS,
@@ -63,7 +63,7 @@ export const getCategories = () => async (dispatch, getState) => {
       
 
     const { data } = await axios.get(`${API_URL}api/v1/getAll-categories`, config);
-    alert(data.message)
+    // alert(data.message)
     dispatch({
       type: GET_CATEGORIES_SUCCESS,
       payload: data
@@ -95,7 +95,7 @@ export const updateCategory = (id, name, description) => async (dispatch, getSta
       { name, description },
       config
     );
-    alert(data.message)
+    // alert(data.message)
     dispatch({
       type: UPDATE_CATEGORY_SUCCESS,
       payload: data.updatedCategory

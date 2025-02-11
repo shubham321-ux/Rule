@@ -50,7 +50,7 @@ function App() {
           <Route path="/password-reset/:token" element={<ResetPasswordForm />} />
 
           {/* Protected Routes */}
-          <Route path="/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
+          <Route path="/products" element={<Products />} />
           <Route path="/product/:id" element={<ProtectedRoute><ProductDetails /></ProtectedRoute>} />
           <Route path="/myorders" element={<ProtectedRoute><Myorders /></ProtectedRoute>} />
           <Route path="/favorite-products" element={<ProtectedRoute><FavoriteProducts /></ProtectedRoute>} />

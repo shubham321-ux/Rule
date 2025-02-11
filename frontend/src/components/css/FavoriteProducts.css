@@ -1,39 +1,213 @@
-.favorites-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px;
-  }
-  
-  .favorite-item {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    position: relative;
-    transition: all 0.3s ease-out;
-    transform-origin: center;
+.favorite-products {
+  width: 100%;
+}
+
+.favorites-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 60px var(--padding-big);
+}
+
+.favorite-item {
+  display: flex;
+  align-items: center;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E2E2E2;
+  border-left: 1px solid #E2E2E2;
+  border-right: 1px solid #E2E2E2;
+  cursor: pointer;
+}
+
+.favorite-item:hover {
+  background-color: #bcb8b85b;
+  transition: all 0.3s ease-in-out;
+}
+
+.product-image-fev {
+  padding: 12px;
+}
+
+.product-image-fev img {
+  width: 73px;
+  height: 101px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.product-info-fev {
+  flex: 1;
+  border-left: 1px solid #E2E2E2;
+  border-right: 1px solid #E2E2E2;
+}
+
+.info-container {
+  display: flex;
+  padding: 35px 12px;
+  align-items: flex-start;
+  gap: 4px;
+  flex-direction: column;
+}
+
+.product-name-fev-div {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.product-name-fev {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.created-date-fev,
+.author-name-fev,
+.product-price-fev {
+  color: #666;
+  font-size: 14px;
+}
+
+.author-name-fev,
+.created-date-fev {
+  font-weight: 600;
+  font-family: var(--Font-Font-family-Para);
+}
+
+.product-price-fev {
+  font-family: var(--Font-Font-family-Heading);
+  color: var(--primary-color);
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  min-width: 250px;
+}
+
+.download-button,
+.remove-button {
+  display: flex;
+  padding: 8px 16px;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  flex: 1 0 0;
+  border-radius: 26px;
+  border: 1px solid var(--Border-border, #E2E2E2);
+  cursor: pointer;
+}
+
+.download-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.remove-button:hover {
+  background-color: #ff4444;
+  color: white;
+}
+
+.removing {
+  animation: fadeOut 0.3s ease-out;
+}
+
+@keyframes fadeOut {
+  from {
     opacity: 1;
   }
-  
-  .favorite-item.removing {
-    transform: scale(0.8);
+  to {
     opacity: 0;
   }
-  
+}
+
+@media (max-width: 768px) {
+  .favorites-list {
+    padding: 60px var(--padding-phone);
+  }
+
+  .favorite-item {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .product-info-fev {
+    border-left: none;
+    border-right: none;
+    padding-top: 10px;
+  }
+
+  .product-name-fev-div {
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .product-name-fev {
+    font-size: 18px;
+  }
+  .info-container {
+    align-items: center;
+    margin: 0;
+    padding: 0;
+  }
+  .product-image-fev img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .created-date-fev,
+  .author-name-fev {
+    font-size: 12px;
+  }
+
+  .product-price-fev {
+    font-size: 16px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+    min-width: unset;
+  }
+
+  .download-button,
   .remove-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #ff4444;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 12px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+    width: 100%;
+    margin-top: 10px;
   }
-  
-  .remove-button:hover {
-    background-color: #ff0000;
+}
+
+@media (max-width: 1024px) {
+  .favorites-list {
+    padding: 40px var(--padding-phone);
   }
-  
+
+  .favorite-item {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .product-info-fev {
+    padding-left: 10px;
+  }
+
+  .product-name-fev {
+    font-size: 18px;
+  }
+
+  .action-buttons {
+    gap: 15px;
+    align-items: center;
+  }
+
+  .download-button,
+  .remove-button {
+    width: 45%;
+  }
+}

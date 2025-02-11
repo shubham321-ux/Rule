@@ -16,7 +16,7 @@
     padding: 20px;
     border-radius: 8px;
     position: relative;
-    width: 400px;
+    min-width: 400px;
     max-width: 90%;
   }
   
@@ -32,6 +32,6 @@
   }
   
   .close-btn:hover {
-    color: red;
+    /* color: red; */
   }
   

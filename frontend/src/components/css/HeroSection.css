@@ -1,0 +1,68 @@
+.hero-container {
+    display: flex;
+    height: 470px;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    border-radius: 16px;
+    /* background: url('/path-to-background.jpg') lightgray 50% / cover no-repeat; */
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 40px;
+    z-index: 1;
+  }
+  
+  .subtitle {
+    color: var(--beige, #E3BD83);
+    font-family: var(--Font-Font-family-Secondary, Lora);
+    font-size: var(--Font-size-subheading-md, 18px);
+    font-weight: 600;
+    line-height: var(--Line-Height-md, 28px);
+  }
+  
+  .title {
+    color: var(--Text-Subheading-lg-2, #FFF);
+    font-family: "Playfair Display";
+    font-size: var(--Font-size-heading-h1, 60px);
+    font-weight: 600;
+    line-height: 66px;
+    text-transform: uppercase;
+  }
+  
+  .description {
+    color: var(--Text-Subheading-lg-2, #FFF);
+    font-family: var(--Font-Font-family-Tertiary, Inter);
+    font-size: var(--Font-size-subheading-body-md-body, 16px);
+    font-weight: 400;
+    line-height: var(--Line-Height-md-body, 26px);
+  }
+  
+  .cta-button {
+    display: flex;
+    padding: 8px 16px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border-radius: 16px;
+    background: var(--Button-Fill-light-Default, #FFF);
+    border: none;
+    cursor: pointer;
+  }
+  
+  .floating-image {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transition: transform 0.3s ease;
+  }
+  
+  .floating-image:hover {
+    transform: scale(1.1);
+  }
+  

@@ -85,7 +85,7 @@ const Login = () => {
 
   return (
     <>
-      <Header />
+      
       <div className="login-container">
         <div className="container">
           <div className="row justify-content-center">

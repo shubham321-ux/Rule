@@ -1,92 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { createProductReviewAction } from '../actions/productAction'; // Assuming the action is defined here
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import ReactStars from 'react-stars';
-import { CREATE_REVIEW_RESET } from '../constants/productConstant'; // Add constant for reset
+import { createProductReviewAction } from '../actions/productAction';
+import './css/CreateReview.css';
 
-const CreateReview = ({ productId }) => {
-  const dispatch = useDispatch();
+const CreateReview = ({ productId, onClose }) => {
+    const dispatch = useDispatch();
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState('');
 
-  // Redux state for review creation
-  const { loading, success, error } = useSelector((state) => state.createReview);
-
-  // Local state for the form
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
-  const [formError, setFormError] = useState('');
-
-  useEffect(() => {
-    if (success) {
-      setRating(0);
-      setComment('');
-      setFormError('');
-      dispatch({ type: CREATE_REVIEW_RESET });  // Reset success state after review submission
-    }
-  }, [dispatch, success]);
-
-  const handleRatingChange = (newRating) => {
-    setRating(newRating);
-  };
-
-  const handleCommentChange = (e) => {
-    setComment(e.target.value);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!rating) {
-      setFormError('Rating is required');
-      return;
-    }
-
-    const reviewData = {
-      rating,
-      comment,
-      productId,
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const reviewData = {
+            productId,
+            rating,
+            comment
+        };
+        dispatch(createProductReviewAction(reviewData));
+        onClose();
     };
-    console.log(reviewData)
 
-    // Dispatch the action to create the review
-    dispatch(createProductReviewAction(reviewData));
-  };
+    return (
+        <div className="create-review-container">
+            <h2>Write a Review</h2>
+            <form onSubmit={handleSubmit}>
+                <div className="rating-section">
+                    <label>Your Rating</label>
+                    <ReactStars
+                        count={5}
+                        value={rating}
+                        size={32}
+                        color2={'#ffd700'}
+                        onChange={(newRating) => setRating(newRating)}
+                    />
+                </div>
 
-  return (
-    <div className="create-review">
-      <h3>Write a Review</h3>
+                <div className="comment-section">
+                    <label>Your Review</label>
+                    <textarea
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="Share your thoughts about this book..."
+                        rows={6}
+                        required
+                    />
+                </div>
 
-      {success && <p className="success-message">Your review has been submitted successfully!</p>}
-      {formError && <p className="error-message">{formError}</p>}
-      {error && <p className="error-message">{error}</p>}
-
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Rating:</label>
-          <ReactStars
-            count={5}
-            value={rating}
-            onChange={handleRatingChange}
-            size={24}
-            color2={'#ffd700'}
-          />
+                <div className="button-group">
+                    <button type="submit" className="submit-button">
+                        Submit Review
+                    </button>
+                    <button type="button" className="cancel-button" onClick={onClose}>
+                        Cancel
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <div>
-          <label>Comment:</label>
-          <textarea
-            value={comment}
-            onChange={handleCommentChange}
-            placeholder="Write your review here..."
-            rows="5"
-          />
-        </div>
-
-        <button type="submit" disabled={loading}>Submit Review</button>
-      </form>
-
-      {loading && <p>Submitting review...</p>}
-    </div>
-  );
+    );
 };
 
 export default CreateReview;
