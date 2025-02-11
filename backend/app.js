@@ -23,7 +23,7 @@ const app = express();
 
 // Enable CORS with specific options
 app.use(cors({
-    origin: process.env.FRONTEND_URL,  // Allow your frontend
+    origin: process.env.FRONTEND_URL || "http://localhost:3000/",  // Allow your frontend
     credentials: true,  // Allow credentials (cookies, etc.)
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // Allowed methods
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],  // Allowed headers
