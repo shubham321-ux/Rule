@@ -12,7 +12,7 @@ const Product = () => {
   const { products, loading, error, totalPages } = useSelector((state) => state.products);
   const { categories } = useSelector((state) => state.category);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-console.log("products:", products);
+
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get("keyword") || "";
   const category = searchParams.get("category") || "";

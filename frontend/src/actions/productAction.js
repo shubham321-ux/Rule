@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { API_URL } from '../config/config.js';
-import store from '../store.js';
 import {
     ALL_PRODUCT_REQUEST,
     ALL_PRODUCT_SUCCESS,
@@ -24,29 +23,6 @@ import {
     CLEAR_ERRORS
 } from '../constants/productConstant.js'
 
-axios.defaults.withCredentials = true;
-axios.defaults.baseURL =API_URL;
-
-const axiosInstance = axios.create({
-    baseURL: API_URL,
-    withCredentials: true,
-    headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-    }
-});
-
-
-axiosInstance.interceptors.request.use(
-    (config) => {
-        const token = store.getState().user?.token;
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
-);
 //get all products
 export const getProduct = (page = 1, keyword = "", category = "", minPrice = "", maxPrice = "", selectedCategories = []) => async (dispatch) => {
     try {
@@ -54,11 +30,6 @@ export const getProduct = (page = 1, keyword = "", category = "", minPrice = "",
 
         const config = {
             withCredentials: true,
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Credentials': true
-            }
         };
 
         // Build query string with all filters
@@ -110,31 +81,33 @@ export const getProductDetails = (id, filters) => async (dispatch) => {
     try {
         dispatch({ type: PRODUCT_DETAILS_REQUEST });
 
-        // Set up request configuration
+        // Config that matches your backend cookie-based auth
         const config = {
-            withCredentials: true,
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Credentials': true
-            }
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true // This ensures cookies are sent with the request
         };
 
-        // Build URL with proper structure
         let url = `${API_URL}api/v1/product/detail/${id}`;
         const queryParams = [];
 
         if (filters) {
-            if (filters.priceRange) queryParams.push(`priceRange=${encodeURIComponent(filters.priceRange)}`);
-            if (filters.minPrice) queryParams.push(`minPrice=${encodeURIComponent(filters.minPrice)}`);
-            if (filters.maxPrice) queryParams.push(`maxPrice=${encodeURIComponent(filters.maxPrice)}`);
+            if (filters.priceRange) {
+                queryParams.push(`priceRange=${encodeURIComponent(filters.priceRange)}`);
+            }
+            if (filters.minPrice) {
+                queryParams.push(`minPrice=${encodeURIComponent(filters.minPrice)}`);
+            }
+            if (filters.maxPrice) {
+                queryParams.push(`maxPrice=${encodeURIComponent(filters.maxPrice)}`);
+            }
         }
 
         if (queryParams.length > 0) {
             url += `?${queryParams.join('&')}`;
         }
 
-        // Make the request
         const { data } = await axios.get(url, config);
 
         dispatch({
@@ -142,24 +115,19 @@ export const getProductDetails = (id, filters) => async (dispatch) => {
             payload: data.product,
         });
     } catch (error) {
-        // Handle unauthorized error
         if (error.response?.status === 401) {
-            window.location.href = '/login';
             dispatch({
                 type: PRODUCT_DETAILS_FAIL,
-                payload: "Login required to view product details"
+                payload: "Please login first",
             });
         } else {
             dispatch({
                 type: PRODUCT_DETAILS_FAIL,
-                payload: error.response?.data?.message || "Error fetching product details"
+                payload: error.response?.data?.message || "Error fetching product details",
             });
         }
     }
 };
-
-
-
 
 
 
