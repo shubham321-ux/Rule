@@ -54,21 +54,21 @@ export const newOrder = async (req, res) => {
         // Create the order
         const order = await Order.create({      
             orderItems,
-            pdf: pdf,  // Store the full PDF object
+            pdf: pdf,  
             itemsPrice,
             taxPrice,
             totalPrice,
-            paidAt: Date.now(), // Set payment time
+            paidAt: Date.now(), 
             user: req.user._id,
-            orderStatus: "Delivered", // Default to Delivered
-            deliveredAt: Date.now(), // Set delivered time
+            orderStatus: "Delivered", 
+            deliveredAt: Date.now(), 
             paymentInfo: {
                 id: purchase.paymentId,
                 status: "completed",
-                paidAt: Date.now() // Set paidAt time
+                paidAt: Date.now() 
             },
             shippingInfo: {
-                phoneNo: '',    // You can skip shipping fields or set default values
+                phoneNo: '',    
                 pinCode: '',
                 country: '',
                 state: '',

@@ -66,7 +66,7 @@ const ProductDetails = () => {
     };
 
     const isProductInFavorites = (productId) => {
-        return favorites.some((fav) => {
+        return favorites?.some((fav) => {
             const favProductId = fav.product?._id || fav.product;
             return favProductId === productId;
         });

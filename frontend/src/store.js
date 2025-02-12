@@ -1,6 +1,9 @@
 import { createStore, combineReducers, applyMiddleware } from "redux";
-import {thunk} from "redux-thunk";
+import { thunk } from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+
 import { paymentReducer } from "./reducers/paymentreducer";
 import { productReducers, productDetailReducers, createProductReducer, createReviewReducer } from "./reducers/productreducers";
 import { cartReducer } from "./reducers/cartreducer";
@@ -9,7 +12,7 @@ import { categoryReducer } from "./reducers/categoryReducer";
 import { newOrderReducer, myOrdersReducer, orderDetailsReducer, allOrdersReducer, orderReducer } from './reducers/orderreducers';
 import { favoriteReducer } from './reducers/fevoritebooksReducer';
 
-const reducer = combineReducers({
+const rootReducer = combineReducers({
     products: productReducers,
     productDetails: productDetailReducers,
     user: userReducer,
@@ -26,61 +29,51 @@ const reducer = combineReducers({
     favorites: favoriteReducer
 });
 
-const loadUser = () => {
+const persistConfig = {
+    key: 'root',
+    storage,
+    whitelist: [
+        'products',
+        'productDetails',
+        'user',
+        'createProduct',
+        'cart',
+        'payment',
+        'newOrder',
+        'myOrders',
+        'orderDetails',
+        'allOrders',
+        'order',
+        'createReview',
+        'category',
+        'favorites'
+    ],
+    serialize: true,
+    debug: process.env.NODE_ENV !== 'production'
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+const loadState = () => {
     try {
-        const serializedUser = localStorage.getItem('user');
-        if (serializedUser === null) return undefined;
-        return JSON.parse(serializedUser);
+        const serializedState = localStorage.getItem('persist:root');
+        if (serializedState === null) {
+            return undefined;
+        }
+        return JSON.parse(serializedState);
     } catch (err) {
         return undefined;
     }
 };
 
-const loadCartItems = (user) => {
-    if (user) {
-        const cartItems = localStorage.getItem(`cart_${user._id}`);
-        return cartItems ? JSON.parse(cartItems) : [];
-    }
-    return [];
-};
-
-const loadFavorites = (user) => {
-    if (user) {
-        const favorites = localStorage.getItem(`favorites_${user._id}`);
-        return favorites ? JSON.parse(favorites) : [];
-    }
-    return [];
-};
-
-const user = loadUser();
-const initialState = {
-    user: { user },
-    cart: {
-        cartItems: loadCartItems(user)
-    },
-    favorites: {
-        favorites: loadFavorites(user)
-    }
-};
-
+const initialState = loadState() || {};
 const middleware = [thunk];
 
 const store = createStore(
-    reducer,
+    persistedReducer,
     initialState,
     composeWithDevTools(applyMiddleware(...middleware))
 );
 
-store.subscribe(() => {
-    const currentUser = store.getState().user.user;
-    const cartItems = store.getState().cart.cartItems;
-    const favorites = store.getState().favorites.favorites;
-
-    if (currentUser) {
-        localStorage.setItem('user', JSON.stringify(currentUser));
-        localStorage.setItem(`cart_${currentUser._id}`, JSON.stringify(cartItems));
-        localStorage.setItem(`favorites_${currentUser._id}`, JSON.stringify(favorites));
-    }
-});
-
+export const persistor = persistStore(store);
 export default store;

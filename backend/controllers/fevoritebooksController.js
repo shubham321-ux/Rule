@@ -11,7 +11,7 @@ export const createFavoriteBook = async (req, res) => {
       const productExist = await FavoriteBook.findOne({ 
         product: productId
       });
-  
+           
       if (productExist) {
         console.log("Product already exists in favorites");
         return res.status(400).json({

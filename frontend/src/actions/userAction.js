@@ -84,21 +84,33 @@ export const loadUser = () => async (dispatch) => {
     try {
         dispatch({ type: LOAD_USER_REQUEST });
 
-        // Make sure to include cookies with the request
+        // Enhanced config for cookie handling
         const config = {
-            withCredentials: true,  // This ensures cookies are sent along with the request
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            withCredentials: true,
+            credentials: 'include'
         };
 
-        // Making the request to /api/v1/me to fetch user data
-        const { data } = await axios.get(`${API_URL}api/v1/me`, config);
+        // Create axios instance with consistent cookie handling
+        const axiosInstance = axios.create({
+            withCredentials: true,
+            credentials: 'include'
+        });
 
-        // Dispatch success action with user data
+        const { data } = await axiosInstance.get(`${API_URL}api/v1/me`, config);
+
         dispatch({ type: LOAD_REGISTER_SUCCESS, payload: data });
     } catch (error) {
-        const errorMessage = error.response ? error.response.data.message : error.message;
-        dispatch({ type: LOAD_REGISTER_FAIL, payload: errorMessage });
+        dispatch({ 
+            type: LOAD_REGISTER_FAIL, 
+            payload: error.response?.data?.message || 'Authentication failed'
+        });
     }
 };
+
 
 
 //logout action

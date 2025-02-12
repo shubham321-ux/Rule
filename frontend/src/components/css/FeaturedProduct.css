@@ -40,6 +40,7 @@ background: #FFF;
     gap: 24px;
     flex: 1 0 0;
     align-self: stretch;
+    width: 100%;
   }
   
   .product-name {
@@ -64,7 +65,7 @@ background: #FFF;
     font-size: 16px;
     font-weight: 400;
     line-height: 26px;
-    text-wrap: wrap;
+    text-wrap: wrap !important;
   }
   .price-title-feature{
     color: #919191;

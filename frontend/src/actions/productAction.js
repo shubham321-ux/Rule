@@ -81,23 +81,26 @@ export const getProductDetails = (id, filters) => async (dispatch) => {
     try {
         dispatch({ type: PRODUCT_DETAILS_REQUEST });
 
+        // Config that matches your backend cookie-based auth
         const config = {
-            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true // This ensures cookies are sent with the request
         };
 
-        // Build query parameters
         let url = `${API_URL}api/v1/product/detail/${id}`;
         const queryParams = [];
 
         if (filters) {
             if (filters.priceRange) {
-                queryParams.push(`priceRange=${filters.priceRange}`);
+                queryParams.push(`priceRange=${encodeURIComponent(filters.priceRange)}`);
             }
             if (filters.minPrice) {
-                queryParams.push(`minPrice=${filters.minPrice}`);
+                queryParams.push(`minPrice=${encodeURIComponent(filters.minPrice)}`);
             }
             if (filters.maxPrice) {
-                queryParams.push(`maxPrice=${filters.maxPrice}`);
+                queryParams.push(`maxPrice=${encodeURIComponent(filters.maxPrice)}`);
             }
         }
 
@@ -112,13 +115,21 @@ export const getProductDetails = (id, filters) => async (dispatch) => {
             payload: data.product,
         });
     } catch (error) {
-        const errorMessage = error.response?.data.message || error.message;
-        dispatch({
-            type: PRODUCT_DETAILS_FAIL,
-            payload: errorMessage,
-        });
+        if (error.response?.status === 401) {
+            dispatch({
+                type: PRODUCT_DETAILS_FAIL,
+                payload: "Please login first",
+            });
+        } else {
+            dispatch({
+                type: PRODUCT_DETAILS_FAIL,
+                payload: error.response?.data?.message || "Error fetching product details",
+            });
+        }
     }
 };
+
+
 
 
 
@@ -225,12 +236,6 @@ export const createProductReviewAction = (reviewData) => async (dispatch, getSta
         });
     }
 };
-
-
-
-
-
-
 
 //clear errors
 export const clearErrors = () => async (dispatch) => {
