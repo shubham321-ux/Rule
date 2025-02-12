@@ -84,32 +84,34 @@ export const loadUser = () => async (dispatch) => {
     try {
         dispatch({ type: LOAD_USER_REQUEST });
 
-        // Enhanced config for cookie handling
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            withCredentials: true,
-            credentials: 'include'
-        };
-
-        // Create axios instance with consistent cookie handling
+        // Create a custom axios instance for this request
         const axiosInstance = axios.create({
-            withCredentials: true,
-            credentials: 'include'
+            baseURL: API_URL,
+            withCredentials: true
         });
 
-        const { data } = await axiosInstance.get(`${API_URL}api/v1/me`, config);
+        // Add request interceptor to ensure cookies are sent
+        axiosInstance.interceptors.request.use((config) => {
+            config.headers = {
+                ...config.headers,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            };
+            return config;
+        });
 
+        const { data } = await axiosInstance.get('api/v1/me');
         dispatch({ type: LOAD_REGISTER_SUCCESS, payload: data });
+
     } catch (error) {
-        dispatch({ 
-            type: LOAD_REGISTER_FAIL, 
-            payload: error.response?.data?.message || 'Authentication failed'
+        dispatch({
+            type: LOAD_REGISTER_FAIL,
+            payload: 'Please login to continue'
         });
     }
 };
+
+
 
 
 
