@@ -7,10 +7,21 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import store, { persistor } from './store.js';
 
+// Configure persistor
+persistor.purge(); // Clear any existing stored state
+persistor.persist(); // Start fresh persistence
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
-    <PersistGate loading={null} persistor={persistor}>
+    <PersistGate 
+      loading={null} 
+      persistor={persistor}
+      onBeforeLift={() => {
+        // Optional: Clear old data before rehydrating
+        localStorage.removeItem('persist:root');
+      }}
+    >
       <App />
     </PersistGate>
   </Provider>
