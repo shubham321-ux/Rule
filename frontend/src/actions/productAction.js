@@ -54,6 +54,11 @@ export const getProduct = (page = 1, keyword = "", category = "", minPrice = "",
 
         const config = {
             withCredentials: true,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Credentials': true
+            }
         };
 
         // Build query string with all filters

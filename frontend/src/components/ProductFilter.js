@@ -59,7 +59,7 @@ const ProductFilter = ({ onPriceRangeChange, onCategoryChange }) => {
       <div className="category-filter">
         <h4>Categories</h4>
         <div className="category-list">
-          {categories?.map((category) => (
+          {Array.isArray(categories) &&categories?.map((category) => (
             <label key={category._id} className="category-item">
               <input
                 type="checkbox"

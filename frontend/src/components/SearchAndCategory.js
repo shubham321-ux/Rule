@@ -44,7 +44,7 @@ const SearchAndCategory = ({ categories, onCategoryChange }) => {
         <div className="select-container">
           <select onChange={handleCategoryChange} value={selectedCategory} style={{ padding: "8px", width: "200px" }}>
             <option value="All">All</option>
-            {categories?.map((item) => (
+            {Array.isArray(categories) && categories?.map((item) => (
               <option key={item._id} value={item.name}>
                 {item.name}
               </option>
