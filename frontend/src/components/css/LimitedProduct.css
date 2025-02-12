@@ -1,0 +1,30 @@
+.main-limited-product-div{
+    display: flex;
+padding: var(--padding-main);;
+flex-direction: column;
+align-items: flex-start;
+gap: 40px;
+align-self: stretch;
+width: 100%;
+}
+.limited-product-div{
+    display: flex;
+    gap:8px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+   
+    .main-limited-product-div{
+        padding: 10px var(--padding-phone);
+      
+    }
+    .limited-product-div{
+        justify-content:space-around;
+        gap: 70px;
+    }
+    
+}

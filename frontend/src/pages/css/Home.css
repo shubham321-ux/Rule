@@ -1,0 +1,11 @@
+.featured-section-home{
+    width: 100%;
+    padding: var(--padding-main);
+    background-color: var(--home-color);
+}
+@media screen and (max-width: 768px) {
+    .featured-section-home{
+        padding: var(--padding-phone);
+    }
+    
+}
