@@ -26,7 +26,7 @@ const app = express();
 
 // CORS Setup to allow requests from frontend domain
 app.use(cors({
-    origin: process.env.FRONTEND_URL,  // Allow frontend URL from environment variable or default to localhost
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",  // Allow frontend URL from environment variable or default to localhost
     credentials: true,  // Allow cookies to be sent with requests
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // Allowed HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],  // Allowed headers
@@ -64,7 +64,7 @@ app.get("/", (req, res) => {
 });
 
 // Set up the server to listen on the port
-const PORT = process.env.PORT || 5000;  // Use Render's dynamic port or default to 5000
+const PORT = process.env.PORT || 5000;  // Use Render's dynamic port or fallback to 5000 for local dev
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
