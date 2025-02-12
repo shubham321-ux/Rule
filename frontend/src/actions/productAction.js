@@ -81,12 +81,12 @@ export const getProductDetails = (id, filters) => async (dispatch) => {
     try {
         dispatch({ type: PRODUCT_DETAILS_REQUEST });
 
-        // Config that matches your backend cookie-based auth
         const config = {
             headers: {
+                'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            withCredentials: true // This ensures cookies are sent with the request
+            withCredentials: true // This is sufficient for cookie handling
         };
 
         let url = `${API_URL}api/v1/product/detail/${id}`;
@@ -128,6 +128,7 @@ export const getProductDetails = (id, filters) => async (dispatch) => {
         }
     }
 };
+
 
 
 
