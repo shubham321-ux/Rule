@@ -26,7 +26,7 @@ const app = express();
 
 // CORS Setup to allow requests from frontend domain
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",  // Allow frontend URL from environment variable or default to localhost
+    origin: process.env.FRONTEND_URL,  // Allow frontend URL from environment variable or default to localhost
     credentials: true,  // Allow cookies to be sent with requests
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // Allowed HTTP methods
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],  // Allowed headers
