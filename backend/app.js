@@ -51,7 +51,7 @@ app.use("/api/v1", categoryrouter);
 app.use("/api/v1", favoriteRouter);
 
 app.get("/", (req, res) => {
-    res.send("hello from the server");
+    res.send("hello from the server rahul");
 });
 
 const PORT = 10000;
