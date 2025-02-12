@@ -23,15 +23,11 @@ dotenv.config({ path: "./config/.env" });
 const app = express();
 
 app.use(cors({
-    origin: [
-        "https://elaborate-cendol-c279fb.netlify.app",  // Add your production frontend URL
-        "http://localhost:3000"  // Keep local development URL if needed
-    ],
+    origin: "http://localhost:3000",
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
-
 
 app.options('*', cors());
 
@@ -55,7 +51,7 @@ app.use("/api/v1", categoryrouter);
 app.use("/api/v1", favoriteRouter);
 
 app.get("/", (req, res) => {
-    res.send("hello from the server start");
+    res.send("hello from the server");
 });
 
 const PORT = 9000;
