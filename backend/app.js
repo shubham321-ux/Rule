@@ -37,7 +37,7 @@ app.use('/uploads', express.static(path.join(currentDirPath, 'uploads')));
 
 // Your routes here...
 app.use("/",(req,res)=>{
-    res.send("Hello");
+    res.send("Hello hy");
 })
 
 const PORT = 8000;
