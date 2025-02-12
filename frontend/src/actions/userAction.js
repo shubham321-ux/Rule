@@ -26,25 +26,30 @@ import { CLEAR_CART } from "../constants/cartConstant.js";
 import axios from "axios";
 import { API_URL } from '../config/config.js';
 
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL =API_URL;
+
+const axiosInstance = axios.create({
+    baseURL: API_URL,
+    withCredentials: true,
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    }
+});
+
 //login action
 export const login = (email, password) => async (dispatch) => {
     try {
         dispatch({ type: LOGIN_REQUEST });
-        const config = {
-            headers: {
-                "Content-Type": "application/json"
-            },
-            withCredentials: true,
-        };
-        const { data } = await axios.post(`${API_URL}api/v1/login/user`, { email, password }, config);
+
+        const { data } = await axiosInstance.post('api/v1/login/user', { email, password });
+
         dispatch({ type: LOGIN_SUCCESS, payload: data });
     } catch (error) {
-        const errorMessage = error.response ? error.response.data.message : error.message;
-        dispatch({ type: LOGIN_FAIL, payload: errorMessage });
-        alert(errorMessage); 
+        dispatch({ type: LOGIN_FAIL, payload: error.response?.data?.message || "Login failed" });
     }
 };
-
 
 
 //register action 
