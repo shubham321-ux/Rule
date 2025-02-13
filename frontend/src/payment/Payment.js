@@ -5,6 +5,7 @@ import { newOrder } from '../actions/orderAction';
 import PopupModal from '../components/PopupModal';
 import { FaCreditCard, FaMobileAlt, FaUniversity } from 'react-icons/fa';
 import { BsCheckCircleFill } from 'react-icons/bs';
+import Loading from '../components/Loading';  // Import the Loading component
 import '../pages/css/Payment.css';
 
 const Payment = ({ product, onSuccess }) => {
@@ -73,6 +74,8 @@ const Payment = ({ product, onSuccess }) => {
 
     return (
         <>
+            {loading && <Loading />}  {/* Show the loading spinner when the payment is processing */}
+            
             <PopupModal show={showStepOne} onClose={() => setShowStepOne(false)}>
                 <div className="step-content">
                     <div className="step-header">

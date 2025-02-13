@@ -10,6 +10,7 @@ import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { FaDownload } from 'react-icons/fa';
 import "./css/ProductDetails.css"
 import { getUserDetails } from '../actions/userAction';
+import Loading from '../components/Loading';
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -92,7 +93,7 @@ const ProductDetails = () => {
         setActiveTab('addReview');
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <Loading/>;
     if (error) return <div>Error: {error}</div>;
 
     return (
@@ -277,4 +278,4 @@ const ProductDetails = () => {
     );
 };
 
-export default ProductDetails;
+export default React.memo(ProductDetails);

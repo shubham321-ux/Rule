@@ -60,6 +60,7 @@ const Header = () => {
           <NavLink onClick={handleLinkClick} to="/" className={({ isActive }) => isActive ? 'active' : ''}>Home</NavLink>
           <NavLink onClick={handleLinkClick} to="/products" className={({ isActive }) => isActive ? 'active' : ''}>Products</NavLink>
           <NavLink onClick={handleLinkClick} to="/myorders" className={({ isActive }) => isActive ? 'active' : ''}>My Orders</NavLink>
+          <NavLink onClick={handleLinkClick} to="/about" className={({ isActive }) => isActive ? 'active' : ''}>About</NavLink>
           {isAuthenticated && userrole === "admin" && 
             <NavLink onClick={handleLinkClick} to="/dashboard" className={({ isActive }) => isActive ? 'active' : ''}>Create Product</NavLink>
           }

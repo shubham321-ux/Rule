@@ -3,14 +3,12 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login, register } from "../actions/userAction";
-import Header from "../components/Header";
 import "./css/LoginPage.css";
-import axios from "axios";  
-import { API_URL } from "../config/config";
+import Loading from "../components/Loading";
 
 const Login = () => {
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector((state) => state.user);
+  const { isAuthenticated, loading } = useSelector((state) => state.user);
   const navigation = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [loginData, setLoginData] = useState({
@@ -58,9 +56,7 @@ const Login = () => {
   const submitRegister = async (e) => {
     e.preventDefault();
     const { email, name, password, avatar } = registerData;
-  
     try {
-      // Instead of verifying with an API, you can directly proceed with the registration logic
       const formData = new FormData();
       formData.append("name", name);
       formData.append("email", email);
@@ -68,24 +64,21 @@ const Login = () => {
       if (avatar) {
         formData.append("avatar", avatar);
       }
-  
-      // Dispatch the registration action
       await dispatch(register(formData));
     } catch (error) {
       setAlertMessage("An error occurred during registration. Please try again.");
     }
   };
-  
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigation("/");  // Redirect to home page after successful login
+      navigation("/");  
     }
   }, [isAuthenticated, navigation]);
 
   return (
     <>
-      
+      {loading && <Loading />}  {/* Show loading overlay if loading is true */}
       <div className="login-container">
         <div className="container">
           <div className="row justify-content-center">

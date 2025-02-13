@@ -5,6 +5,7 @@ import { getProductDetails } from "../actions/productAction";
 import { FiDownload } from 'react-icons/fi';
 import './css/Myorders.css';
 import { useNavigate } from "react-router-dom";
+import Loading from "../components/Loading";
 
 const Myorders = () => {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ const Myorders = () => {
 
   return (
     <div className="main-my-order-div">
-      {loading && <p>Loading...</p>}
+      {loading && <Loading/>}
       {error && <p style={{ color: "red" }}>{`Error: ${error.message || error}`}</p>}
       {orders && orders.length === 0 && !loading && <p>No orders found.</p>}
 

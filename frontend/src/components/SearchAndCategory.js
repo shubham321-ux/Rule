@@ -1,21 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import "./css/SearchAndCategory.css"
+import "./css/SearchAndCategory.css";
 import { FaSearch } from 'react-icons/fa';
+import { debounce } from "lodash";  // Importing debounce from Lodash
 
 const SearchAndCategory = ({ categories, onCategoryChange }) => {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // Debounce the search function
+  const debouncedSearch = useCallback(
+    debounce((searchTerm, category) => {
+      const params = new URLSearchParams();
+      if (searchTerm) params.set("keyword", searchTerm);
+      if (category !== "All") params.set("category", category);
+      setSearchParams(params);
+      navigate(`/products?${params.toString()}`);
+    }, 500), // Delay of 500ms after user stops typing
+    []
+  );
+
+  // Handle search input change
   const handleSearchChange = (e) => {
     const newKeyword = e.target.value;
     setKeyword(newKeyword);
+    debouncedSearch(newKeyword, selectedCategory); // Trigger the debounced search
   };
 
+  // Handle category selection change
   const handleCategoryChange = (e) => {
     const category = e.target.value;
     setSelectedCategory(category);
@@ -27,6 +42,7 @@ const SearchAndCategory = ({ categories, onCategoryChange }) => {
     navigate(`/products?${params.toString()}`);
   };
 
+  // Handle search submit (on button click)
   const handleSearchSubmit = () => {
     const params = new URLSearchParams();
     if (keyword) params.set("keyword", keyword);

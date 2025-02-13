@@ -25,6 +25,8 @@ width: 100%;
     .limited-product-div{
         justify-content:space-around;
         gap: 70px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
     }
     
 }

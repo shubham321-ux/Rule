@@ -128,10 +128,13 @@
     .author-section-div-main {
       padding: 20px var(--padding-phone);
       gap: 24px;
+      flex-direction: column;
     }
   
     .author-section-div-2 {
       gap: 16px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
     }
   
     .author-section-card {
@@ -142,6 +145,8 @@
   @media screen and (max-width: 480px) {
     .author-section-div-main {
       padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
     }
   
     .author-image-div {

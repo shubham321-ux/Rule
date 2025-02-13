@@ -5,7 +5,9 @@ const Loading = () => {
   return (
     <div className="loading-overlay">
       <div className="loading-spinner">
-        <div className="loading-text"></div>
+        <div className="loading-ball"></div>
+        <div className="loading-ball"></div>
+        <div className="loading-ball"></div>
       </div>
     </div>
   );

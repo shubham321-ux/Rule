@@ -4,6 +4,7 @@ import { getFavorites, removeFromFavorites } from "../actions/favoritebooksActio
 import { FaDownload } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./css/FavoriteProducts.css";
+import Loading from "./Loading";
 
 const FavoriteProducts = () => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const FavoriteProducts = () => {
   return (
     <div className="favorite-products">
       {loading ? (
-        <div>Loading...</div>
+     <Loading/>
       ) : !favorites || favorites.length === 0 ? (
         <div>No favorite products found</div>
       ) : (
