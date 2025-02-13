@@ -39,12 +39,15 @@ app.use((req, res, next) => {
     next();
 });
 
-const uploadDir = path.join('/mnt/data', 'uploads');
-app.use('/uploads', express.static(uploadDir));
+const uploadDir = path.join(currentDirPath, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(currentDirPath, 'uploads')));
 
 app.use("/api/v1", productrouter);
 app.use("/api/v1", userrouter);
