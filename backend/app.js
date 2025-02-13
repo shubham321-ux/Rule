@@ -28,7 +28,7 @@ const app = express();
 
 // CORS Configuration
 app.use(cors({
-    origin: ['https://bokifa.netlify.app','http://localhost:3002', process.env.FRONTEND_URL],
+    origin: [process.env.FRONTEND_URL],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
