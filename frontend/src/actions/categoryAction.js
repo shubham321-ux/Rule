@@ -20,14 +20,14 @@ export const createCategory = (name, description) => async (dispatch, getState) 
   try {
     dispatch({ type: CREATE_CATEGORY_REQUEST });
 
+    const token = localStorage.getItem('token');
 
-
-    const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true, 
-      };
+        const config = {
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        };
       
 
     const { data } = await axios.post(
@@ -54,12 +54,14 @@ export const getCategories = () => async (dispatch, getState) => {
     dispatch({ type: GET_CATEGORIES_REQUEST });
 
 
+    const token = localStorage.getItem('token');
+
     const config = {
+        withCredentials: true,
         headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true, 
-      };
+            'Authorization': `Bearer ${token}`
+        }
+    };
       
 
     const { data } = await axios.get(`${API_URL}api/v1/getAll-categories`, config);
@@ -82,12 +84,14 @@ export const updateCategory = (id, name, description) => async (dispatch, getSta
 
 
 
+    const token = localStorage.getItem('token');
+
     const config = {
+        withCredentials: true,
         headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true, 
-      };
+            'Authorization': `Bearer ${token}`
+        }
+    };
       
 
     const { data } = await axios.put(
@@ -114,12 +118,14 @@ export const deleteCategory = (id) => async (dispatch, getState) => {
 
 
 
+    const token = localStorage.getItem('token');
+
     const config = {
+        withCredentials: true,
         headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true, 
-      };
+            'Authorization': `Bearer ${token}`
+        }
+    };
       
 
    const{data}= await axios.delete(`${API_URL}api/v1/delete-category/${id}`, config);

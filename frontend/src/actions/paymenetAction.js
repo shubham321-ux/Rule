@@ -17,9 +17,13 @@ export const processPayment = (productId) => async (dispatch) => {
     try {
         dispatch({ type: PROCESS_PAYMENT_REQUEST });
 
+        const token = localStorage.getItem('token');
+
         const config = {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         };
 
         const { data } = await axios.post(
@@ -51,9 +55,13 @@ export const confirmPayment = (productId, razorpayPaymentId, razorpayOrderId, ra
     try {
         dispatch({ type: CONFIRM_PAYMENT_REQUEST });
 
+        const token = localStorage.getItem('token');
+
         const config = {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         };
 
         // Send all necessary data for payment confirmation
@@ -93,10 +101,14 @@ export const getPdfAccess = (productId) => async (dispatch) => {
     try {
         dispatch({ type: GET_PDF_ACCESS_REQUEST });
 
-        const config = {
-            withCredentials: true
-        };
+        const token = localStorage.getItem('token');
 
+        const config = {
+            withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        };
         const { data } = await axios.get(
             `${API_URL}api/v1/pdf/access/${productId}`,
             config

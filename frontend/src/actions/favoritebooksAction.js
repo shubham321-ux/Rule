@@ -18,11 +18,13 @@ export const addToFavorites = (productId) => async (dispatch) => {
     try {
         dispatch({ type: ADD_TO_FAVORITES_REQUEST });
 
+        const token = localStorage.getItem('token');
+
         const config = {
-            headers: {
-                'Content-Type': 'application/json',
-            },
             withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         };
 
         const { data } = await axios.post(
@@ -48,8 +50,13 @@ export const getFavorites = () => async (dispatch) => {
     try {
         dispatch({ type: GET_FAVORITES_REQUEST });
 
+        const token = localStorage.getItem('token');
+
         const config = {
             withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         };
 
         const { data } = await axios.get(
@@ -74,8 +81,13 @@ export const removeFromFavorites = (id) => async (dispatch) => {
     try {
         dispatch({ type: REMOVE_FROM_FAVORITES_REQUEST });
 
+        const token = localStorage.getItem('token');
+
         const config = {
             withCredentials: true,
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         };
 
         await axios.delete(`${API_URL}api/v1/favorite/${id}`, config);
