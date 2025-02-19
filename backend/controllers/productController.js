@@ -14,7 +14,7 @@ export const createProduct = async (req, res) => {
     try {
         // Create uploads directory
         const uploadDir = path.join(process.cwd(), 'uploads');
-        await fs.mkdir(uploadDir, { recursive: true });
+        fs.mkdirSync(uploadDir, { recursive: true });
         
         // Parse incoming data
         const formData = typeof req.body.data === 'string' ? JSON.parse(req.body.data) : req.body;
@@ -29,13 +29,16 @@ export const createProduct = async (req, res) => {
                 const filePath = path.join(uploadDir, file.filename);
                 
                 const result = await cloudinary.uploader.upload(filePath, {
+                    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+                    api_key: process.env.CLOUDINARY_API_KEY,
+                    api_secret: process.env.CLOUDINARY_API_SECRET,
                     folder: 'products/images',
                     width: 1000,
                     crop: "scale"
                 });
 
-                if (existsSync(filePath)) {
-                    await fs.unlink(filePath);
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
                 }
                 
                 images.push({
@@ -51,6 +54,9 @@ export const createProduct = async (req, res) => {
             const pdfPath = path.join(uploadDir, pdfFile.filename);
             
             const pdfResult = await cloudinary.uploader.upload(pdfPath, {
+                cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+                api_key: process.env.CLOUDINARY_API_KEY,
+                api_secret: process.env.CLOUDINARY_API_SECRET,
                 resource_type: "raw",
                 folder: "pdfs",
                 use_filename: true,
@@ -58,8 +64,8 @@ export const createProduct = async (req, res) => {
                 type: "private"
             });
             
-            if (existsSync(pdfPath)) {
-                await fs.unlink(pdfPath);
+            if (fs.existsSync(pdfPath)) {
+                fs.unlinkSync(pdfPath);
             }
 
             const downloadUrl = cloudinary.utils.private_download_url(
@@ -80,7 +86,6 @@ export const createProduct = async (req, res) => {
             };
         }
 
-        // Create product
         const productData = {
             name: name.trim(),
             description: description.trim(),
@@ -104,15 +109,14 @@ export const createProduct = async (req, res) => {
         console.error("Product creation error:", error);
 
         try {
-            // Clean up temporary files
             if (req.files) {
                 const uploadDir = path.join(process.cwd(), 'uploads');
                 const files = Object.values(req.files).flat();
                 
                 for (const file of files) {
                     const filePath = path.join(uploadDir, file.filename);
-                    if (existsSync(filePath)) {
-                        await fs.unlink(filePath);
+                    if (fs.existsSync(filePath)) {
+                        fs.unlinkSync(filePath);
                     }
                 }
             }
@@ -126,7 +130,6 @@ export const createProduct = async (req, res) => {
         });
     }
 };
-
 
 
 
