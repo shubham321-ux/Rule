@@ -12,11 +12,11 @@ export const createProduct = async (req, res) => {
     console.log("Creating product...");
     
     try {
-        // Create uploads directory with proper permissions
+        // Create uploads directory
         const uploadDir = path.join(process.cwd(), 'uploads');
         await fs.mkdir(uploadDir, { recursive: true });
         
-        // Parse the incoming data
+        // Parse incoming data
         const formData = typeof req.body.data === 'string' ? JSON.parse(req.body.data) : req.body;
         const { name, description, price, category, author } = formData;
 
@@ -34,7 +34,9 @@ export const createProduct = async (req, res) => {
                     crop: "scale"
                 });
 
-                await fs.unlink(filePath);
+                if (existsSync(filePath)) {
+                    await fs.unlink(filePath);
+                }
                 
                 images.push({
                     public_id: result.public_id,
@@ -56,12 +58,15 @@ export const createProduct = async (req, res) => {
                 type: "private"
             });
             
-            await fs.unlink(pdfPath);
+            if (existsSync(pdfPath)) {
+                await fs.unlink(pdfPath);
+            }
 
             const downloadUrl = cloudinary.utils.private_download_url(
                 pdfResult.public_id, 
                 'pdf',
                 { 
+                    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
                     resource_type: "raw",
                     type: "private",
                     expires_at: Math.floor(Date.now()/1000) + 3600
@@ -75,7 +80,7 @@ export const createProduct = async (req, res) => {
             };
         }
 
-        // Create product in database
+        // Create product
         const productData = {
             name: name.trim(),
             description: description.trim(),
@@ -98,17 +103,21 @@ export const createProduct = async (req, res) => {
     } catch (error) {
         console.error("Product creation error:", error);
 
-        // Clean up any remaining files
-        if (req.files) {
-            const uploadDir = path.join(process.cwd(), 'uploads');
-            Object.values(req.files).flat().forEach(async file => {
-                const filePath = path.join(uploadDir, file.filename);
-                try {
-                    await fs.unlink(filePath);
-                } catch (err) {
-                    console.error("File cleanup error:", err);
+        try {
+            // Clean up temporary files
+            if (req.files) {
+                const uploadDir = path.join(process.cwd(), 'uploads');
+                const files = Object.values(req.files).flat();
+                
+                for (const file of files) {
+                    const filePath = path.join(uploadDir, file.filename);
+                    if (existsSync(filePath)) {
+                        await fs.unlink(filePath);
+                    }
                 }
-            });
+            }
+        } catch (cleanupError) {
+            console.error("File cleanup error:", cleanupError);
         }
 
         res.status(500).json({
