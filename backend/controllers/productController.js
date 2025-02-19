@@ -10,7 +10,12 @@ import path from 'path';
 
 export const createProduct = async (req, res) => {
     console.log("Creating product...");
+    
     try {
+        // Create uploads directory with proper permissions
+        const uploadDir = path.join(process.cwd(), 'uploads');
+        await fs.mkdir(uploadDir, { recursive: true });
+        
         // Parse the incoming data
         const formData = typeof req.body.data === 'string' ? JSON.parse(req.body.data) : req.body;
         const { name, description, price, category, author } = formData;
@@ -21,88 +26,70 @@ export const createProduct = async (req, res) => {
         // Handle image uploads
         if (req.files && req.files.images) {
             for (const file of req.files.images) {
-                const result = await cloudinary.uploader.upload(file.path, {
-                    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-                    api_key: process.env.CLOUDINARY_API_KEY,
-                    api_secret: process.env.CLOUDINARY_API_SECRET,
+                const filePath = path.join(uploadDir, file.filename);
+                
+                const result = await cloudinary.uploader.upload(filePath, {
                     folder: 'products/images',
                     width: 1000,
                     crop: "scale"
                 });
 
-                // Remove the file after uploading to Cloudinary
-                fs.unlinkSync(file.path);
+                await fs.unlink(filePath);
                 
-                // Add image data to the images array
                 images.push({
                     public_id: result.public_id,
                     url: result.secure_url
                 });
             }
         }
-// Handle PDF upload
-if (req.files && req.files.productPDF && req.files.productPDF[0]) {
-    const pdfFile = req.files.productPDF[0];
-    
-    const pdfResult = await cloudinary.uploader.upload(pdfFile.path, {
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET,
-        resource_type: "raw",
-        folder: "pdfs",
-        use_filename: true,
-        unique_filename: true,
-        type: "private"
-    });
-    
-    fs.unlinkSync(pdfFile.path);
 
-    // Get a temporary downloadable URL valid for 1 hour
-    const downloadUrl = cloudinary.utils.private_download_url(
-        pdfResult.public_id, 
-        'pdf',
-        { 
+        // Handle PDF upload
+        if (req.files && req.files.productPDF && req.files.productPDF[0]) {
+            const pdfFile = req.files.productPDF[0];
+            const pdfPath = path.join(uploadDir, pdfFile.filename);
+            
+            const pdfResult = await cloudinary.uploader.upload(pdfPath, {
+                resource_type: "raw",
+                folder: "pdfs",
+                use_filename: true,
+                unique_filename: true,
+                type: "private"
+            });
+            
+            await fs.unlink(pdfPath);
 
-             cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-            resource_type: "raw",
-            type: "private",
-            expires_at: Math.floor(Date.now()/1000) + 3600
+            const downloadUrl = cloudinary.utils.private_download_url(
+                pdfResult.public_id, 
+                'pdf',
+                { 
+                    resource_type: "raw",
+                    type: "private",
+                    expires_at: Math.floor(Date.now()/1000) + 3600
+                }
+            );
+
+            productPDF = {
+                public_id: pdfResult.public_id,
+                url: downloadUrl,
+                filename: pdfFile.originalname
+            };
         }
-    );
 
-    productPDF = {
-        public_id: pdfResult.public_id,
-        url: downloadUrl,
-        filename: pdfFile.originalname
-    };
-}
-
-
-
-
-
-
-
-
-
-
-        // Prepare the product data to be stored in the database
+        // Create product in database
         const productData = {
             name: name.trim(),
             description: description.trim(),
             price: Number(price),
             category: category.trim(),
-            stock: 1,  // Assuming stock starts at 1 for a new product
+            stock: 1,
             author: author.trim(),
-            images,  // Add images array
-            productPDF  // Add product PDF (if uploaded)
+            images,
+            productPDF
         };
 
-        // Create the product in the database
         const product = await Product.create(productData);
         console.log("Product created successfully:", product._id);
 
-        // Send success response with product data
         res.status(201).json({
             success: true,
             product
@@ -111,16 +98,19 @@ if (req.files && req.files.productPDF && req.files.productPDF[0]) {
     } catch (error) {
         console.error("Product creation error:", error);
 
-        // Clean up any files that were uploaded if there is an error
+        // Clean up any remaining files
         if (req.files) {
-            Object.values(req.files).flat().forEach(file => {
-                if (file.path && fs.existsSync(file.path)) {
-                    fs.unlinkSync(file.path);
+            const uploadDir = path.join(process.cwd(), 'uploads');
+            Object.values(req.files).flat().forEach(async file => {
+                const filePath = path.join(uploadDir, file.filename);
+                try {
+                    await fs.unlink(filePath);
+                } catch (err) {
+                    console.error("File cleanup error:", err);
                 }
             });
         }
 
-        // Send error response with message
         res.status(500).json({
             success: false,
             message: "Failed to create product: " + error.message
