@@ -1,0 +1,124 @@
+.trending-container-main{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    padding: 64px 0;
+    overflow-x: hidden;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+.trending-container-main::-webkit-scrollbar {
+    display: none;
+}
+.trending-container {
+    width: 100%;
+    display: flex;
+    gap: 20px;
+    padding: 20px var(--padding-main);
+    overflow-x: auto;
+}
+
+.book-card {
+    width: 100%;
+    display: flex;
+padding: 16px 36px 26px 36px;
+align-items: center;
+gap: 20px;
+border-radius: 16px;
+
+}
+
+.book-image {
+    width: 120px;
+    height: 160px;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.book-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.book-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+}
+
+.book-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.book-category {
+    font-family: var(--Font-Font-family-Para);;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    color: var(--accent-color);
+}
+
+.book-name {
+    font-family: var(--Font-Font-family-Heading);
+    font-size: 24px;
+    font-weight: 600;
+    color:#fff;
+    line-height: 24px;
+    width: 150px;
+    text-wrap: wrap;
+}
+
+.shop-now-btn {
+    align-self: flex-end;
+    padding: 8px 16px;
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--Font-Font-family-Para);
+    font-weight: 500;
+}
+
+.shop-now-btn:hover {
+    background: var(--accent-color);
+}
+
+@media (max-width: 768px) {
+    .trending-container-main{
+        padding: 10px 0;
+    }
+    .trending-container {
+        padding: 15px var(--padding-phone);
+    }
+    
+    .book-card {
+        min-width: 280px;
+    }
+
+    .book-name {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .trending-container {
+        gap: 12px;
+        
+    }
+
+    .book-card {
+        min-width: 280px;
+        padding: 12px;
+    }
+
+    .book-image {
+        width: 100px;
+        height: 140px;
+    }
+}

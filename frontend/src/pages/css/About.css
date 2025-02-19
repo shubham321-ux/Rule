@@ -1,0 +1,233 @@
+.about-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 40px;
+    align-self: stretch;
+}
+ 
+.about-sub-container1 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+}
+ 
+.about-container1-row {
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+}
+ 
+.about-container1-card {
+    display: flex;
+    padding: 20px;
+    align-items: flex-start;
+    gap: 20px;
+    flex: 1 0 0;
+    border: 1px solid var(--Border-border, #E2E2E2);
+}
+ 
+.about-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    flex: 1 0 0;
+}
+ 
+.about-sub-heading {
+    overflow: hidden;
+    color: var(--text-color-text-secondary, #404040);
+    text-overflow: ellipsis;
+    /* subheading/md(18)/md-semibold */
+    font-family: var(--Font-Font-family-Secondary, Lora);
+    font-size: var(--Font-size-subheading-md, 18px);
+    font-style: normal;
+    font-weight: 600;
+    line-height: var(--Line-Height-md, 28px);
+    /* 155.556% */
+    padding: 0;
+    margin: 0;
+}
+ 
+.about-card-para {
+    color: var(--text-color-text-label, #919191);
+ 
+    /* body/regular */
+    font-family: var(--Font-Font-family-Tertiary, Inter);
+    font-size: var(--Font-size-subheading-body-md-body, 16px);
+    font-style: normal;
+    font-weight: 400;
+    line-height: var(--Line-Height-md-body, 26px);
+    /* 162.5% */
+    padding: 0;
+    margin: 0;
+}
+ 
+.about-card-image {
+    border: 4px solid var(--Border-border, #E2E2E2);
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.08) 100%), lightgray 50% / cover no-repeat;
+}
+ 
+.about-sub-container2 {
+    display: flex;
+    padding: 24px;
+    align-items: flex-start;
+    gap: 10px;
+    align-self: stretch;
+    background: var(--Surface-bg-secondary, #F9F5F0);
+}
+ 
+.about-container2-para {
+    color: var(--sds-color-text-warning-secondary);
+    font-family: var(--Font-Font-family-Tertiary, Inter);
+    font-size: var(--Font-size-subheading-body-md-body, 16px);
+    font-style: italic;
+    font-weight: 500;
+    line-height: var(--Line-Height-md-body, 26px);
+    /* 162.5% */
+    padding: 0;
+    margin: 0;
+}
+ 
+.about-sub-container3 {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    align-self: stretch;
+}
+ 
+.about-sub-container3-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    flex: 1 0 0;
+    text-align: center;
+}
+ 
+.about-sub-container3-card-heading {
+    width: 100%;
+}
+ 
+ 
+ 
+/* Laptop/Medium Desktop Adjustments */
+@media (max-width: 1024px) {
+   
+    .about-container1-row {
+        flex-direction: column;
+      }
+ 
+      .about-sub-container3 {
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+ 
+      .about-sub-container3-card {
+        flex: 1 1 45%;
+        min-width: 280px;
+      }
+ 
+  }
+ 
+/* Tablet and Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .about-container {
+      gap: 30px;
+    }
+ 
+    .about-container1-row {
+      flex-direction: column;
+    }
+ 
+    .about-container1-card {
+      flex-direction: column;
+      padding: 15px;
+      gap: 15px;
+    }
+ 
+    .about-card-image {
+      width: 100%;
+      height: auto;
+    }
+ 
+    .about-sub-container2 {
+      padding: 20px;
+    }
+ 
+    .about-sub-container3 {
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+ 
+    .about-sub-container3-card {
+      flex: 1 1 45%;
+      min-width: 280px;
+    }
+  }
+ 
+  /* Mobile-specific Styles */
+  @media (max-width: 480px) {
+    .about-container {
+      gap: 20px;
+    }
+ 
+    .about-container1-card {
+      padding: 10px;
+    }
+ 
+    .about-sub-heading {
+      font-size: 16px;
+      line-height: 24px;
+    }
+ 
+    .about-card-para {
+      font-size: 14px;
+      line-height: 22px;
+    }
+ 
+    .about-sub-container2 {
+      padding: 15px;
+    }
+ 
+    .about-container2-para {
+      font-size: 14px;
+      line-height: 22px;
+    }
+ 
+    .about-sub-container3 {
+      flex-direction: column;
+      gap: 15px;
+    }
+ 
+    .about-sub-container3-card {
+      flex: 1 1 100%;
+      min-width: auto;
+      gap: 12px;
+      text-align: start;
+    }
+  }
+ 
+  /* Small Mobile Screens */
+  @media (max-width: 320px) {
+    .about-card-content {
+      gap: 6px;
+    }
+ 
+    .about-sub-heading {
+      font-size: 15px;
+    }
+ 
+    .about-card-para {
+      font-size: 13px;
+      line-height: 20px;
+    }
+ 
+    .about-sub-container3-card {
+        text-align: start;
+      }
+  }
+ 

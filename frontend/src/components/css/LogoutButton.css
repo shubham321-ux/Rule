@@ -1,0 +1,25 @@
+.logout-button {
+    background: var(--primary-color);
+    color: white;
+    padding: 12px 28px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    font-family: var(--Font-Font-family-Tertiary);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.logout-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(2, 122, 54, 0.3);
+    background: #026b30;
+}
+
+@media screen and (max-width: 480px) {
+    .logout-button {
+        padding: 10px 24px;
+        font-size: 14px;
+    }
+}

@@ -1,0 +1,223 @@
+.featured-section {
+    display: flex;
+    padding: 40px;
+    gap: 32px;
+    width: 100%;
+    
+  }
+  
+  .featured-content {
+    display: flex;
+    gap: 48px;
+    width: 100%;
+  }
+  
+  .content-left {
+    display: flex;
+    width: 463px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .subtitle {
+    color: var(--text-color-text-label, #919191);
+    font-family: var(--Font-Font-family-Tertiary, Inter);
+    font-size: var(--Font-size-subheading-body-md-body, 16px);
+    font-weight: 600;
+    line-height: var(--Line-Height-md-body, 26px);
+  }
+  
+  .section-title {
+    color: var(--text-color-text-secondary, #404040);
+    font-family: var(--Font-Font-family-Primary, "Playfair Display");
+    font-size: var(--Font-size-heading-h2, 40px);
+    font-weight: 400;
+    line-height: var(--Line-Height-h2, 48px);
+  }
+  
+  .content-right {
+    flex: 1;
+    position: relative;
+  }
+  
+  .scroll-buttons {
+    display: flex;
+    gap: 16px;
+    position: absolute;
+    top: -60px;
+    right: 0;
+  }
+  
+  .scroll-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .scroll-button:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+  }
+  
+  .items-container {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 20px 10px;
+  }
+  
+  .items-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .item-card {
+    display: flex;
+    padding: 40px 32px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    flex: 1 0 300px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08),
+                0 -2px 10px rgba(0,0,0,0.03),
+                -4px 0 10px rgba(0,0,0,0.03),
+                4px 0 10px rgba(0,0,0,0.03);
+    transition: all 0.3s ease;
+  }
+  
+  .item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12),
+                0 -2px 15px rgba(0,0,0,0.05),
+                -4px 0 15px rgba(0,0,0,0.05),
+                4px 0 15px rgba(0,0,0,0.05);
+  }
+  .star {
+    color: #E0E0E0; /* Light gray color for unfilled stars */
+    font-size: 20px;
+  }
+  
+  .star.filled {
+    color: var(--primary-color); /* Your primary color for filled stars */
+  }
+  
+  .scroll-buttons-bottom {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 24px;
+    justify-content: end;
+  }
+  
+  @media (max-width: 768px) {
+    .star {
+      font-size: 18px;
+    }
+    
+    .star.filled {
+      color: var(--primary-color);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .star {
+      font-size: 16px;
+    }
+  }
+  
+  
+ 
+  @media (max-width: 1200px) {
+    .featured-section {
+      padding: 32px;
+    }
+    
+    .content-left {
+      width: 400px;
+    }
+  }
+  
+  @media (max-width: 1024px) {
+    .featured-content {
+      flex-direction: column;
+    }
+  
+    .content-left {
+      width: 100%;
+      max-width: 600px;
+    }
+  
+    .scroll-buttons {
+      position: relative;
+      top: 0;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+     
+    }
+    .scroll-button button{
+        border: 1px solid var(--accent-color);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .featured-section {
+      padding: 24px 16px;
+    }
+  
+    .section-title {
+      font-size: 32px;
+      line-height: 40px;
+    }
+  
+    .item-card {
+      flex: 1 0 260px;
+      padding: 24px;
+    }
+    .filled{
+        color: var(--primary-color);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .featured-section {
+      padding: 16px 12px;
+    }
+  
+    .section-title {
+      font-size: 28px;
+      line-height: 36px;
+    }
+  
+    .subtitle {
+      font-size: 14px;
+    }
+  
+    .item-card {
+      flex: 1 0 220px;
+      padding: 20px;
+    }
+  
+    .scroll-buttons {
+      gap: 12px;
+    }
+  
+    .scroll-button {
+      width: 36px;
+      height: 36px;
+    }
+  }
+  

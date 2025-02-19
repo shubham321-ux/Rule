@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#root{
+  max-width: 1440px;
+  width: 100%;
+}
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+:root {
+  --big-heading-color: #1D1D1D;
+  --small-heading-color: #09331A;
+  --paragraph-color: #404040;
+  --primary-color: #027A36;
+  --secondary-color: #F9F5F0;
+  --accent-color: #E3BD83;
+  --padding-main:48px;
+  --padding-phone: 24px;
+  --padding-big:64px;
+  --Font-Font-family-Heading: 'Playfair Display', serif;
+  --Font-Font-family-Para: 'Inter', sans-serif;
+  --home-color:#e3bd8327;
+}
+
+/* Example usage */
+h1 {
+  color: var(--big-heading-color);
+}
+
+h2 {
+  color: var(--small-heading-color);
+}
+
+p {
+  color: var(--paragraph-color);
+}
+a{
+  text-decoration: none;
+}
+.normal-para{
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: left;
+  font-family:  var(--Font-Font-family-Para);
+  margin: 0;
+}
+.main-heading{
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: 0em;
+  text-align: left;
+  font-family: var(  --Font-Font-family-Heading);
+  margin: 0;
+}
+
+
