@@ -109,7 +109,9 @@ const CreateProduct = () => {
   };
 
   return (
-   <>{loading?<Loading/>: <div className="create-product-container">
+   <>{loading?<Loading/>:
+    < div className="products-list-container" >
+   <div className="create-product-container">
     {/* <Header /> */}
     <h2>Create New Product</h2>
     {loading && <p>Loading Categories...</p>}
@@ -232,7 +234,9 @@ const CreateProduct = () => {
         Create Product
       </button>
     </form>
-  </div>}
+  </div>
+  </div>
+  }
    </>
   );
 };

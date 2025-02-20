@@ -38,12 +38,24 @@ const FavoriteProducts = () => {
     navigate(`/product/${productId}`);
   };
 
+  const navigateToProducts = () => {
+    navigate('/products');
+  };
+
   return (
     <div className="favorite-products">
       {loading ? (
-     <Loading/>
+        <Loading/>
       ) : !favorites || favorites.length === 0 ? (
-        <div>No favorite products found</div>
+        <div className="no-favorites-container">
+          <p>No favorite products found</p>
+          <button 
+            className="browse-products-button"
+            onClick={navigateToProducts}
+          >
+            Browse Products
+          </button>
+        </div>
       ) : (
         <div className="favorites-list">
           {favorites.map((favorite, index) => {

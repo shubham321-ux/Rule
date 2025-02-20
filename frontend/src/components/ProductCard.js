@@ -10,6 +10,7 @@ import unfillstar from "../assest/unfillstar.svg";
 import { AiOutlineEye, AiFillEye } from 'react-icons/ai';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { addToFavorites, removeFromFavorites, getFavorites } from "../actions/favoritebooksAction";
+import Loading from "./Loading";
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ const ProductCard = ({ product }) => {
     e.preventDefault();
     if (!user) return;
 
-    const favoriteItem = favorites.find(
+    const favoriteItem = favorites?.find(
       (fav) => (fav.product?._id || fav.product) === product._id
     );
 
@@ -67,8 +68,8 @@ const ProductCard = ({ product }) => {
     navigate(`/product/${product._id}`);
   };
 
-  return (
-    <Link key={product._id} to={`/product/${product._id}`}>
+  return (<>
+  {loading?<Loading/>:  <Link key={product._id} to={`/product/${product._id}`}>
       <div
         className={`product-card ${removing ? 'removing' : ''}`}
         onMouseEnter={() => !isMobile && setIsHovered(true)}
@@ -122,8 +123,9 @@ const ProductCard = ({ product }) => {
           </p>
         </div>
       </div>
-    </Link>
-  );
+    </Link>}
+  
+  </>);
 };
 
 export default ProductCard;

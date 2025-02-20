@@ -38,15 +38,30 @@ const Myorders = () => {
     navigate(`/product/${productId}`);
   };
 
+  const navigateToProducts = () => {
+    navigate('/products');
+  };
+
   return (
     <div className="main-my-order-div">
       {loading && <Loading/>}
       {error && <p style={{ color: "red" }}>{`Error: ${error.message || error}`}</p>}
-      {orders && orders.length === 0 && !loading && <p>No orders found.</p>}
+      
+      {(!myallorders || myallorders.length === 0) && !loading && (
+        <div className="no-orders-container">
+          <p>You haven't placed any orders yet.</p>
+          <button 
+            className="browse-products-button"
+            onClick={navigateToProducts}
+          >
+            Browse Products
+          </button>
+        </div>
+      )}
 
       <div className="orders-container">
         {myallorders && myallorders.length > 0 && myallorders.map((order) => (
-          <div  key={order._id} className="order-card">
+          <div key={order._id} className="order-card">
             {order.orderItems && order.orderItems.map((item) => (
               <div key={item._id} className="order-item">
                 <div className="image-container">
@@ -65,13 +80,16 @@ const Myorders = () => {
                   <p>Author: {product?.author || 'Loading...'}</p>
 
                   <div className="buttons-container">
-                    <button className="read-button"
-                     onClick={() => window.open(order.pdf?.url, "_blank")}>
+                    <button 
+                      className="read-button"
+                      onClick={() => window.open(order.pdf?.url, "_blank")}
+                    >
                       Read Now
                     </button>
                     <button
                       className="my-order-download-button"
-                      onClick={() => window.open(order.pdf?.url, "_blank")}>
+                      onClick={() => window.open(order.pdf?.url, "_blank")}
+                    >
                       <FiDownload className="download-icon" /> Download
                     </button>
                   </div>

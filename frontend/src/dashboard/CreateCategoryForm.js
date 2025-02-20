@@ -44,6 +44,7 @@ const CreateCategoryForm = () => {
   };
 
   return (
+    < div className="products-list-container" >
     <div>
       <h1>{selectedCategoryId ? "Update Category" : "Create Category"}</h1>
 
@@ -91,6 +92,7 @@ const CreateCategoryForm = () => {
       ) : (
         <p>No categories available</p>
       )}
+    </div>
     </div>
   );
 };
