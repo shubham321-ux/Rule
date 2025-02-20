@@ -6,30 +6,45 @@ import cloudinary, { cloudinaryConfig }  from '../cloudinary/cloudinary.js';
 import streamifier from "streamifier"
 import upload from "../multer/multer.js"
 import fs from "fs"
+import path from 'path';
 
 // Register user
 // In your controller (userController.js)
 
 
 export const registeruser = async (req, res) => {
-    console.log("Registration request received:", req.body);
-    console.log("File received:", req.file);
-
+    console.log("Starting user registration...");
+    
     try {
+        // Create uploads directory
+        const uploadDir = path.join(process.cwd(), 'uploads');
+        fs.mkdirSync(uploadDir, { recursive: true });
+        
+        // Parse incoming data
         const { name, email, password } = req.body;
-
+        
         let avatarData = {
             public_id: 'default_avatar_id',
-            url: 'https://default-avatar-url.com/avatar.png'
+            url: 'https://res.cloudinary.com/dkqxlkzr1/image/upload/v1700800098/avatars/default_avatar_hspxpu.png'
         };
 
-        if (req.file) {
-            const result = await cloudinary.uploader.upload(req.file.path, {
+        // Handle avatar upload
+        if (req.files && req.files.avatar && req.files.avatar[0]) {
+            const avatarFile = req.files.avatar[0];
+            const filePath = path.join(uploadDir, avatarFile.filename);
+            
+            const result = await cloudinary.uploader.upload(filePath, {
                 cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
                 api_key: process.env.CLOUDINARY_API_KEY,
                 api_secret: process.env.CLOUDINARY_API_SECRET,
-                folder: 'avatars'
+                folder: 'avatars',
+                width: 150,
+                crop: "scale"
             });
+
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
             
             avatarData = {
                 public_id: result.public_id,
@@ -37,14 +52,18 @@ export const registeruser = async (req, res) => {
             };
         }
 
-        const user = await User.create({
-            name,
-            email,
+        const userData = {
+            name: name.trim(),
+            email: email.trim(),
             password,
-            avatar: avatarData
-        });
+            avatar: avatarData,
+            role: "user"
+        };
 
+        const user = await User.create(userData);
         const token = user.getJWTToken();
+
+        console.log("User registered successfully:", user._id);
 
         res.status(201).json({
             success: true,
@@ -54,20 +73,29 @@ export const registeruser = async (req, res) => {
 
     } catch (error) {
         console.error("Registration error:", error);
+
+        try {
+            if (req.files) {
+                const uploadDir = path.join(process.cwd(), 'uploads');
+                const files = Object.values(req.files).flat();
+                
+                for (const file of files) {
+                    const filePath = path.join(uploadDir, file.filename);
+                    if (fs.existsSync(filePath)) {
+                        fs.unlinkSync(filePath);
+                    }
+                }
+            }
+        } catch (cleanupError) {
+            console.error("File cleanup error:", cleanupError);
+        }
+
         res.status(500).json({
             success: false,
-            message: error.message
+            message: "Registration failed: " + error.message
         });
     }
 };
-
-
-
-
-
-
-
-
 
 
 // Add multer upload middleware to the route

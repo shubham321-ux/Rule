@@ -63,33 +63,38 @@ export const register = (formData) => async (dispatch) => {
     try {
         dispatch({ type: REGISTER_REQUEST });
         
-        // Log form data contents
-        for (let pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
-        }
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            withCredentials: true
+        };
 
-        const response = await axios.post(`${API_URL}api/v1/register/user`, 
-            formData,  
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-                withCredentials: true
-            }
+        const { data } = await axios.post(
+            `${API_URL}api/v1/register/user`,
+            formData,
+            config
         );
 
-        dispatch({ 
-            type: REGISTER_SUCCESS, 
-            payload: response.data 
+        // Store token immediately after successful registration
+        localStorage.setItem('token', data.token);
+
+        dispatch({
+            type: REGISTER_SUCCESS,
+            payload: data
         });
 
+        // Optionally load user data right after registration
+        dispatch(loadUser());
+
     } catch (error) {
-        dispatch({ 
-            type: REGISTER_FAIL, 
-            payload: error.response?.data?.message || "Registration failed" 
+        dispatch({
+            type: REGISTER_FAIL,
+            payload: error.response?.data?.message || "Registration failed"
         });
     }
 };
+
 
 
 

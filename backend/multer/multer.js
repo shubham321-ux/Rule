@@ -25,12 +25,14 @@ const fileFilter = (req, file, cb) => {
         } else {
             cb(new Error('Only PDF files are allowed!'), false);
         }
-    } else if (file.fieldname === "images") {
+    } else if (file.fieldname === "images" || file.fieldname === "avatar") {
         if (file.mimetype.startsWith('image/')) {
             cb(null, true);
         } else {
             cb(new Error('Only images are allowed!'), false);
         }
+    } else {
+        cb(new Error('Unexpected field!'), false);
     }
 };
 

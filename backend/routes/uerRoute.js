@@ -21,8 +21,9 @@ import upload from "../multer/multer.js"; // Import the Multer configuration
 const userrouter = express.Router();
 
 // Register user - Public (with avatar upload)
-userrouter.post('/register/user', upload.single('avatar'), registeruser);
-
+userrouter.post('/register/user', upload.fields([
+    { name: 'avatar', maxCount: 1 }
+]), registeruser);
 // Login user - Public
 userrouter.post('/login/user', loginuser);
 
@@ -45,7 +46,9 @@ userrouter.get('userfromToken',isauthenticatedUser,getUserFromToken)
 userrouter.put('/password/update', isauthenticatedUser, updatepassword);
 
 // Update user details - Protected (authentication required)
-userrouter.put('/user/update', isauthenticatedUser, userupdate);
+userrouter.put('/user/update', isauthenticatedUser, upload.fields([
+    { name: 'avatar', maxCount: 1 }
+]), userupdate);
 
 
 userrouter.get('/admin/user/:id', isauthenticatedUser, getSingleUser);
