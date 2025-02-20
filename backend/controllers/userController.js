@@ -11,35 +11,25 @@ import fs from "fs"
 // In your controller (userController.js)
 
 
-export const registeruser = async (req, res, next) => {
+export const registeruser = async (req, res) => {
+    console.log("Registration request received:", req.body);
+    console.log("File received:", req.file);
+
     try {
         const { name, email, password } = req.body;
 
-        // Check existing user
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            if (req.file) fs.unlinkSync(req.file.path);
-            return res.status(400).json({
-                success: false,
-                message: "Email is already registered."
-            });
-        }
-
-        // Handle avatar upload
         let avatarData = {
             public_id: 'default_avatar_id',
-            url: 'default_avatar_url'
+            url: 'https://default-avatar-url.com/avatar.png'
         };
 
         if (req.file) {
             const result = await cloudinary.uploader.upload(req.file.path, {
-                ...cloudinaryConfig,
-                folder: 'avatars',
-                width: 150,
-                crop: "scale"
+                cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+                api_key: process.env.CLOUDINARY_API_KEY,
+                api_secret: process.env.CLOUDINARY_API_SECRET,
+                folder: 'avatars'
             });
-            
-            fs.unlinkSync(req.file.path);
             
             avatarData = {
                 public_id: result.public_id,
@@ -47,7 +37,6 @@ export const registeruser = async (req, res, next) => {
             };
         }
 
-        // Create user
         const user = await User.create({
             name,
             email,
@@ -55,21 +44,24 @@ export const registeruser = async (req, res, next) => {
             avatar: avatarData
         });
 
-        // Send response with token
-        sendToken(user, 201, res);
+        const token = user.getJWTToken();
+
+        res.status(201).json({
+            success: true,
+            token,
+            user
+        });
 
     } catch (error) {
-        if (req.file && fs.existsSync(req.file.path)) {
-            fs.unlinkSync(req.file.path);
-        }
-
-        console.error('Registration Error:', error);
+        console.error("Registration error:", error);
         res.status(500).json({
             success: false,
             message: error.message
         });
     }
 };
+
+
 
 
 

@@ -12,6 +12,15 @@ import { CLEAR_CART } from "../constants/cartConstant.js";
 import axios from "axios";
 import { API_URL } from '../config/config.js';
 
+import storage from 'redux-persist/lib/storage';
+
+const persistConfig = {
+  key: 'root',
+  storage,
+  whitelist: ['auth'], // Only persist authentication data
+  blacklist: ['products', 'cart'] // Don't persist these reducers
+};
+
 // Configure axios defaults
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = API_URL;
@@ -53,19 +62,39 @@ export const login = (email, password) => async (dispatch) => {
 export const register = (formData) => async (dispatch) => {
     try {
         dispatch({ type: REGISTER_REQUEST });
-        const { data } = await axios.post(`${API_URL}api/v1/register/user`, 
-            formData,
+        
+        // Log form data contents
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
+
+        const response = await axios.post(`${API_URL}api/v1/register/user`, 
+            formData,  
             {
-                headers: { "Content-Type": "multipart/form-data" },
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
                 withCredentials: true
             }
         );
-        localStorage.setItem('token', data.token);
-        dispatch({ type: REGISTER_SUCCESS, payload: data });
+
+        dispatch({ 
+            type: REGISTER_SUCCESS, 
+            payload: response.data 
+        });
+
     } catch (error) {
-        dispatch({ type: REGISTER_FAIL, payload: error.response?.data?.message });
+        dispatch({ 
+            type: REGISTER_FAIL, 
+            payload: error.response?.data?.message || "Registration failed" 
+        });
     }
 };
+
+
+
+
+
 
 // Load user
 export const loadUser = () => async (dispatch) => {

@@ -34,7 +34,7 @@
   },
   
     "scripts": {
-      "dev": "react-scripts start",
+      "dev": "react-scripts start", 
       "build": "set \"CI=false\" && react-scripts build",
       "start": "react-scripts start",
       "test": "react-scripts test"
