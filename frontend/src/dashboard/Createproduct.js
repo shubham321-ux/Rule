@@ -4,11 +4,10 @@ import { createProduct } from "../actions/productAction";
 import { getCategories } from "../actions/categoryAction";
 import Header from "../components/Header";
 import Loading from "../components/Loading";
+import "./css/Createproduct.css";
 
 const CreateProduct = () => {
   const dispatch = useDispatch();
-
-  // Get categories from Redux store
   const { categories, loading, error } = useSelector((state) => state.category);
 
   const [formData, setFormData] = useState({
@@ -17,19 +16,17 @@ const CreateProduct = () => {
     price: "",
     category: "",
     stock: "",
-    author: "", // Fixed: Added the 'author' field to formData state
+    author: "",
   });
 
   const [images, setImages] = useState([]);
   const [productPDF, setProductPDF] = useState(null);
   const [previewImages, setPreviewImages] = useState([]);
 
-  // Dispatch the getCategories action on mount to fetch categories
   useEffect(() => {
     dispatch(getCategories());
   }, [dispatch]);
 
-  // Handle changes in form fields
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
@@ -37,7 +34,6 @@ const CreateProduct = () => {
     });
   };
 
-  // Handle image selection and preview
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     setImages([]);
@@ -55,189 +51,188 @@ const CreateProduct = () => {
     });
   };
 
-  // Handle product manual PDF upload
+  const removeImage = (index) => {
+    setPreviewImages(previewImages.filter((_, i) => i !== index));
+    setImages(images.filter((_, i) => i !== index));
+  };
+
   const handlePdfChange = (e) => {
     setProductPDF(e.target.files[0]);
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const productData = new FormData();
 
-    // Add form fields to FormData
     Object.keys(formData).forEach((key) => {
       productData.append(key, formData[key]);
     });
 
-    // Add images to FormData
     images.forEach((image) => {
       productData.append("images", image);
     });
 
-    // Add PDF to FormData if provided
     if (productPDF) {
       productData.append("productPDF", productPDF);
     }
 
     try {
-      console.log("Product Data:", productData);
-      // Dispatch createProduct action
       await dispatch(createProduct(productData));
 
-      // Reset form and inputs after successful submission
       setFormData({
         name: "",
         description: "",
         price: "",
         category: "",
         stock: "",
-        author: "", // Fixed: Added author reset in the form reset
+        author: "",
       });
       setImages([]);
       setPreviewImages([]);
       setProductPDF(null);
 
-      // Reset file inputs
       document.getElementById("imageInput").value = "";
       document.getElementById("pdfInput").value = "";
-      // window.location.reload();
     } catch (error) {
       console.error("Error creating product:", error);
     }
   };
 
   return (
-   <>{loading?<Loading/>:
-    < div className="products-list-container" >
-   <div className="create-product-container">
-    {/* <Header /> */}
-    <h2>Create New Product</h2>
-    {loading && <p>Loading Categories...</p>}
-    {error && <p style={{ color: "red" }}>Error: {error}</p>}
-    <form
-      onSubmit={handleSubmit}
-      className="product-form"
-      encType="multipart/form-data"
-    >
-      {/* Product Name */}
-      <div className="form-group">
-        <label>Name:</label>
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleInputChange}
-          required
-        />
-      </div>
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className="products-list-container">
+        <div className="create-product-wrapper">
+          <div className="create-product-main-container">
+            <h2 className="create-product-heading">Create New Product</h2>
+            {error && <p className="create-product-error">Error: {error}</p>}
+            
+            <form onSubmit={handleSubmit} className="create-product-form" encType="multipart/form-data">
+              <div className="create-product-form-group">
+                <label className="create-product-label">Name:</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Enter product name"
+                  className="create-product-input"
+                />
+              </div>
 
-      {/* Author of Book */}
-      <div className="form-group">
-        <label>Author of Book:</label>
-        <input
-          type="text"
-          name="author" // Fixed: Corrected to 'author'
-          value={formData.author}
-          onChange={handleInputChange}
-          required
-        />
-      </div>
+              <div className="create-product-form-group">
+                <label className="create-product-label">Author:</label>
+                <input
+                  type="text"
+                  name="author"
+                  value={formData.author}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Enter author name"
+                  className="create-product-input"
+                />
+              </div>
 
-      {/* Product Description */}
-      <div className="form-group">
-        <label>Description:</label>
-        <textarea
-          name="description"
-          value={formData.description}
-          onChange={handleInputChange}
-          required
-        />
-      </div>
+              <div className="create-product-form-group">
+                <label className="create-product-label">Description:</label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Enter product description"
+                  className="create-product-textarea"
+                />
+              </div>
 
-      {/* Product Price */}
-      <div className="form-group">
-        <label>Price:</label>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <span style={{ marginRight: "5px" }}>₹</span>{" "}
-          {/* Display the rupee symbol */}
-          <input
-            type="number"
-            name="price"
-            value={formData.price}
-            onChange={handleInputChange}
-            required
-            style={{ width: "100%" }}
-          />
+              <div className="create-product-form-group">
+                <label className="create-product-label">Price:</label>
+                <div className="create-product-price-container">
+                  <span className="create-product-currency">₹</span>
+                  <input
+                    type="number"
+                    name="price"
+                    value={formData.price}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="Enter price"
+                    className="create-product-input"
+                  />
+                </div>
+              </div>
+
+              <div className="create-product-form-group">
+                <label className="create-product-label">Category:</label>
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  required
+                  className="create-product-select"
+                >
+                  <option value="">Select Category</option>
+                  {categories?.map((category) => (
+                    <option key={category._id} value={category.name}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="create-product-form-group">
+                <label className="create-product-label">Images:</label>
+                <input
+                  id="imageInput"
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="create-product-file-input"
+                />
+                <div className="create-product-preview-container">
+                  {previewImages.map((image, index) => (
+                    <div key={index} className="create-product-image-wrapper">
+                      <img
+                        src={image}
+                        alt={`preview-${index}`}
+                        className="create-product-preview-image"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="create-product-remove-btn"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="create-product-form-group">
+                <label className="create-product-label">Product Manual (PDF):</label>
+                <input
+                  id="pdfInput"
+                  type="file"
+                  accept=".pdf"
+                  onChange={handlePdfChange}
+                  required
+                  className="create-product-file-input"
+                />
+              </div>
+
+              <button type="submit" className="create-product-submit">
+                Create Product
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
-      {/* Product Category (Dropdown) */}
-      <div className="form-group">
-        <label>Category:</label>
-        <select
-          name="category"
-          value={formData.category}
-          onChange={handleInputChange}
-          required
-        >
-          <option value="">Select Category</option>
-          {categories &&
-            categories.map((category) => (
-              <option key={category._id} value={category.name}>
-                {category.name}
-              </option>
-            ))}
-        </select>
-      </div>
-
-      {/* Product Images */}
-      <div className="form-group">
-        <label>Images:</label>
-        <input
-          id="imageInput"
-          type="file"
-          multiple
-          accept="image/*"
-          onChange={handleImageChange}
-        />
-        <div className="image-preview">
-          {previewImages.map((image, index) => (
-            <img
-              key={index}
-              src={image}
-              alt={`preview-${index}`}
-              style={{
-                width: "100px",
-                height: "100px",
-                objectFit: "cover",
-                margin: "5px",
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Product Manual (PDF) */}
-      <div className="form-group">
-        <label>Product Manual (PDF):</label>
-        <input
-          id="pdfInput"
-          type="file"
-          accept=".pdf"
-          onChange={handlePdfChange}
-          required
-        />
-      </div>
-
-      <button type="submit" className="submit-btn">
-        Create Product
-      </button>
-    </form>
-  </div>
-  </div>
-  }
-   </>
+      </div>)}
+    </>
   );
 };
 

@@ -133,7 +133,7 @@ export const getAllOrders = (page = 1) => async (dispatch) => {
       };
   
       const { data } = await axios.post(
-        `/api/v1/admin/orders`, 
+        `${API_URL}api/v1/admin/orders`, 
         { page }, 
         config
       );

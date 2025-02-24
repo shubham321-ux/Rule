@@ -1,0 +1,201 @@
+.create-product-main-container {
+  width: 100%;
+
+   
+}
+
+.create-product-heading {
+ display: flex;
+    margin-bottom: 15px;
+    gap: 15px;
+    align-items: center;
+    button{
+        border: none;
+        background: none;
+        padding-top: 10px;
+        margin: 0;
+        cursor: pointer;
+    }
+    button:hover{
+        color: #027A36;
+        scale: 1.1;
+        transition: all 0.3s ease;
+    }
+}
+
+.create-product-form-group {
+    margin-bottom: 10px;
+}
+
+.create-product-label {
+   
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.create-product-input,
+.create-product-textarea,
+.create-product-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #027A36;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.create-product-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.create-product-price-container {
+    display: flex;
+    align-items: center;
+}
+
+.create-product-currency {
+    color: #027A36;
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+.create-product-file-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px dashed #027A36;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.create-product-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.create-product-image-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border: 2px solid #027A36;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.create-product-preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.create-product-remove-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #027A36;
+    transition: all 0.3s ease;
+}
+
+.create-product-remove-btn:hover {
+    background: #027A36;
+    color: white;
+}
+
+.create-product-submit {
+    width: 30%;
+    padding: 12px;
+    background-color: #027A36;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-product-submit:hover {
+    background-color: #025a2a;
+}
+
+.create-product-error {
+    color: #dc2626;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.existing-categories-section {
+    margin-top: 40px;
+    padding: 20px;
+    background: #f8f8f8;
+    border-radius: 8px;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.category-card {
+    background: white;
+    border: 1px solid #027A36;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+align-items: center;
+    justify-content: space-between;
+}
+
+.category-content {
+    margin-bottom: 15px;
+}
+
+.category-title {
+    color: #027A36;
+    margin: 0 0 10px 0;
+    font-size: 18px;
+}
+
+.category-description {
+    color: #666;
+    margin: 0;
+    font-size: 14px;
+}
+
+.category-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.delete-category-btn {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    height: 50%;
+}
+
+.delete-category-btn:hover {
+    background: #b91c1c;
+}
+
+.no-categories {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    margin: 20px 0;
+}

@@ -1,0 +1,168 @@
+.admin-orders-container {
+    padding: 20px;
+  }
+  
+  .orders-table-container {
+    overflow-x: auto;
+  }
+  
+  .orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .orders-table th,
+  .orders-table td {
+    padding: 12px;
+    text-align: left;
+    text-align: center;
+  }
+  
+  .orders-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    text-align: center;
+  }
+  
+  .order-item {
+    margin: 4px 0;
+    font-size: 14px;
+  }
+  
+  .status-select {
+    padding: 6px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+  
+  .status-select.processing {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  
+  .status-select.shipped {
+    background-color: #cce5ff;
+    color: #004085;
+  }
+  
+  .status-select.delivered {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .delete-btn {
+    padding: 6px 12px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .delete-btn:hover {
+    background-color: #c82333;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 20px;
+  }
+  
+  .pagination button {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    background: #09331ab5;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .pagination button:disabled {
+    background: #09331ab5;
+    cursor: not-allowed;
+  }
+  
+  .error-message {
+    color: #dc3545;
+    text-align: center;
+    margin: 20px;
+  }
+  .no-orders {
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+  }
+  
+  .no-orders h2 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 24px;
+  }
+  
+  .no-orders p {
+    color: #666;
+    font-size: 16px;
+  }
+  .user-details-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+    max-width: 500px;
+    width: 90%;
+  }
+  
+  .back-button {
+    margin-bottom: 20px;
+    padding: 8px 16px;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .user-info {
+    margin-top: 20px;
+  }
+  
+  .info-row {
+    display: flex;
+    margin: 10px 0;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .info-row label {
+    width: 100px;
+    font-weight: bold;
+  }
+  
+  .user-link {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  
+  

@@ -2,6 +2,7 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+ 
 }
 
 .dashboard-header {
@@ -18,7 +19,7 @@
 
 .dashboard-sidebar {
     display: flex;
-    height: 1086px;
+    height: 100%;
     padding: 32px 39px;
     flex-direction: column;
     align-items: center;
@@ -32,6 +33,9 @@
 
 .nav-group {
     margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .nav-group h3 {
@@ -39,24 +43,79 @@
     font-size: 14px;
     text-transform: uppercase;
     margin-bottom: 10px;
+    text-align: center;
 }
 
 .dashboard-sidebar nav a {
-    display: block;
-    padding: 10px 15px;
-    color: white;
-    text-decoration: none;
-    margin: 5px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
     border-radius: 4px;
     transition: background 0.3s;
+    padding-top: 10px ;
 }
 
 .dashboard-sidebar nav a:hover {
-    background: #3c3c3c;
+    background: #3c3c3c7d;
 }
 
 .dashboard-content {
     flex: 1;
     padding: 20px;
     background: #03763510;
+    height: 100%;
+    min-height: 100vh;
+}
+.dashboard-sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    /* padding: 8px; */
+    /* margin: 4px 0; */
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.icon-container {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: #027A36;
+    box-shadow: 0px 8px 32px 0px rgba(51, 38, 174, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.dashboard-sidebar a span {
+    color: #129F48;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 22px;
+}
+
+.dashboard-sidebar a.active .icon-container {
+    background: white;
+    color: #129F48;
+}
+
+.dashboard-sidebar a:hover .icon-container {
+    transform: translateY(-2px);
+}
+.dashboard-sidebar a.active span {
+    color: white;
+}
+
+
+
+.dashboard-sidebar a.active .icon-container {
+    background: white;
+    color: #129F48;
 }

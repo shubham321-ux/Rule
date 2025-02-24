@@ -39,7 +39,7 @@ const DashboardFirst = () => {
 
   return (
     <div className="dashboard-main">
-      <h1>Dashboard Overview</h1>
+       <h2 className="create-product-heading">Dashboard Overview</h2>
       
       <div className="dashboard-stats">
         <div className="stat-card">

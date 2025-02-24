@@ -406,13 +406,24 @@ export const userupdate = async (req, res) => {
 //get all users(admin)
 export const getAllUsers = async (req, res) => {
     try {
-        const users = await User.find();
+        const page = Number(req.query.page) || 1;
+        const limit = 10;
+        const skip = (page - 1) * limit;
+
+        const totalUsers = await User.countDocuments();
+        const users = await User.find()
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
         res.status(200).json({
             success: true,
-            users
+            users,
+            totalUsers,
+            resultsPerPage: limit,
+            currentPage: page
         });
-    }
-    catch (error) {
+    } catch (error) {
         console.log(error);
         res.status(500).json({
             success: false,
@@ -423,21 +434,28 @@ export const getAllUsers = async (req, res) => {
 }
 
 
+
 //get single user(admin)
 export const getSingleUser = async (req, res) => {
+
     try {
-        const user = await User.findById(req.params.id);
+        const { userId } = req.body;
+
+        
+        const user = await User.findById(userId);
+
         if (!user) {
             return res.status(404).json({
                 success: false,
                 message: "User not found"
             });
-           
         }
+
         res.status(200).json({
             success: true,
             user
         });
+        console.log(user);
     }
     catch (error) {
         console.log(error);
@@ -447,7 +465,8 @@ export const getSingleUser = async (req, res) => {
             error: error.message
         });
     }
-}
+};
+
 
 
 ///update user role(admin)

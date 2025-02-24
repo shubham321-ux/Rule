@@ -24,6 +24,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import About from "./pages/About";
 import DashboardFirst from "./dashboard/DashboardFirst";
 import ProductsForAdmin from "./dashboard/ProductsForAdmin";
+import Alladminorders from "./dashboard/Alladminorders";
+import UsersManagement from "./dashboard/UsersManagement";
 function App() {
   const [loading, setLoading] = useState(true);
   const { isAuthenticated, user } = useSelector((state) => state.user);
@@ -84,11 +86,12 @@ function App() {
             <DashboardHome />
           </AdminProtectedRoute>
         }>
-          <Route index element={<DashboardFirst />} />
+          <Route index element={<ProductsForAdmin />} />
           <Route path="create-product" element={<CreateProduct />} />
           <Route path="create-category" element={<CreateCategoryForm />} />
           <Route path="products-forAdmin" element={<ProductsForAdmin />} />
-          <Route path="orders" element={<Myorders />} />
+          <Route path="allorders" element={<Alladminorders />} />
+          <Route path="allusers" element={<UsersManagement/>} />
         </Route>
       </Routes>
     </BrowserRouter>

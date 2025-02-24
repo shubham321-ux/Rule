@@ -139,6 +139,7 @@ export const myOrders = async (req, res) => {
 
 // Get all orders (for admin)
 export const getAllOrders = async (req, res) => {
+    console.log("Inside getAllOrders");
     try {
       const { page = 1 } = req.body;
       const resultPerPage = 10;

@@ -114,61 +114,66 @@ const ProductsForAdmin = () => {
   if (loading) return <Loading />;
 
   return (
-    <div className="products-admin-container">
+    
+ <>
       {isUpdating ? (
-        <div className="update-form-container">
-          <div className="update-header">
-            <button 
-              className="back-button"
-              onClick={() => setIsUpdating(false)}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M19 12H5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              
-            </button>
-            <h2>Update Product</h2>
-          </div>
-          <form onSubmit={handleUpdateSubmit} encType="multipart/form-data">
-            {Object.keys(formData).map(key => {
-              if (key === 'images' || key === 'productPDF') {
-                return (
-                  <div className="form-group" key={key}>
-                    <label htmlFor={key}>{key.charAt(0).toUpperCase() + key.slice(1)}</label>
-                    <input
-                      type="file"
-                      id={key}
-                      name={key}
-                      multiple={key === 'images'}
-                      accept={key === 'images' ? "image/*" : ".pdf"}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                );
-              }
-              return (
-                <div className="form-group" key={key}>
-                  <label htmlFor={key}>{key.charAt(0).toUpperCase() + key.slice(1)}</label>
-                  <input
-                    type={key === 'price' ? 'number' : 'text'}
-                    id={key}
-                    name={key}
-                    value={formData[key]}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              );
-            })}
-            <div className="form-actions">
-              <button type="submit" className="btn-update">Update</button>
+          <div className="products-list-container">
+  <div className="create-product-wrapper">
+    <div className="create-product-main-container">
+      <div className="create-product-heading">
+        <button
+          className="create-product-back-btn"
+          onClick={() => setIsUpdating(false)}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M19 12H5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+        <h2>Update Product</h2>
+      </div>
+
+      <form onSubmit={handleUpdateSubmit} className="create-product-form" encType="multipart/form-data">
+        {Object.keys(formData).map(key => {
+          if (key === 'images' || key === 'productPDF') {
+            return (
+              <div className="create-product-form-group" key={key}>
+                <label className="create-product-label">{key.charAt(0).toUpperCase() + key.slice(1)}</label>
+                <input
+                  type="file"
+                  id={key}
+                  name={key}
+                  multiple={key === 'images'}
+                  accept={key === 'images' ? "image/*" : ".pdf"}
+                  onChange={handleInputChange}
+                  className="create-product-file-input"
+                />
+              </div>
+            );
+          }
+          return (
+            <div className="create-product-form-group" key={key}>
+              <label className="create-product-label">{key.charAt(0).toUpperCase() + key.slice(1)}</label>
+              <input
+                type={key === 'price' ? 'number' : 'text'}
+                id={key}
+                name={key}
+                value={formData[key]}
+                onChange={handleInputChange}
+                required
+                className="create-product-input"
+              />
             </div>
-          </form>
-        </div>
-      ) : (
+          );
+        })}
+        <button type="submit" className="create-product-submit">Update Product</button>
+      </form>
+    </div>
+  </div>
+  </div>
+)  : (
         <div className="products-list-container">
-          <h1>Products Management</h1>
+           <h2 className="create-product-heading">Products Management</h2>
           <table className="products-table">
             <thead>
               <tr>
@@ -235,7 +240,7 @@ const ProductsForAdmin = () => {
           )}
         </div>
       )}
-    </div>
+</>
   );
 };
 

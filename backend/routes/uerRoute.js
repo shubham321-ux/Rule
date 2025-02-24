@@ -39,6 +39,9 @@ userrouter.put('/password/reset/:token', resetpassword);
 // Get the currently logged-in user - Protected (authentication required)
 userrouter.get('/me', isauthenticatedUser, getuser);
 
+//get user details
+userrouter.post('/user/details', isauthenticatedUser,authorizeRolesadmin,getSingleUser);
+
 //get user from cookie
 userrouter.get('userfromToken',isauthenticatedUser,getUserFromToken)
 
