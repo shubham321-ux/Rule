@@ -41,6 +41,7 @@ const CreateCategoryForm = () => {
   };
 
   return (
+    <div className="products-list-container">
     <div className="create-product-wrapper">
       <div className="create-product-main-container">
         <h2 className="create-product-heading">
@@ -104,7 +105,7 @@ const CreateCategoryForm = () => {
         </div>
       </div>
     </div>
-  );
+    </div> );
 };
 
 export default CreateCategoryForm;

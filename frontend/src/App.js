@@ -26,6 +26,7 @@ import DashboardFirst from "./dashboard/DashboardFirst";
 import ProductsForAdmin from "./dashboard/ProductsForAdmin";
 import Alladminorders from "./dashboard/Alladminorders";
 import UsersManagement from "./dashboard/UsersManagement";
+import EditProfile from "./pages/EditProfile";
 function App() {
   const [loading, setLoading] = useState(true);
   const { isAuthenticated, user } = useSelector((state) => state.user);
@@ -61,13 +62,10 @@ function App() {
           <Route path="password-reset/:token" element={<ResetPasswordForm />} />
           <Route path="about" element={<About />} />
           <Route path="products" element={<Products />} />
-          
+          <Route path="product/:id" element={<ProductDetails />} />
+         
           {/* Protected Routes */}
-          <Route path="product/:id" element={
-            <ProtectedRoute>
-              <ProductDetails />
-            </ProtectedRoute>
-          } />
+          <Route path="profile" element={<ProtectedRoute><EditProfile/></ProtectedRoute>} />
           <Route path="myorders" element={
             <ProtectedRoute>
               <Myorders />

@@ -8,18 +8,20 @@ import ReactStars from 'react-stars';
 import Payment from '../payment/Payment';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { FaDownload } from 'react-icons/fa';
-import "./css/ProductDetails.css"
-import { getUserDetails } from '../actions/userAction';
+import "./css/ProductDetails.css";
 import Loading from '../components/Loading';
 
 const ProductDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    
     const { product, loading, error } = useSelector((state) => state.productDetails);
     const { favorites } = useSelector((state) => state.favorites);
     const { user, isAuthenticated } = useSelector((state) => state.user);
+    
     const [showPayment, setShowPayment] = useState(false);
+    const [hasPurchased, setHasPurchased] = useState(false);
     const [pdfUrl, setPdfUrl] = useState(null);
     const [selectedImage, setSelectedImage] = useState(0);
     const [activeTab, setActiveTab] = useState('description');
@@ -28,10 +30,17 @@ const ProductDetails = () => {
         dispatch(getProductDetails(id));
     }, [dispatch, id]);
 
-    const handleAuthRequired = () => {
-        if (!isAuthenticated) {
-            navigate('/login', { state: { from: `/product/${id}` } });
+    useEffect(() => {
+        if (product?.purchases && user?._id) {
+            const userPurchase = product.purchases.find(
+                purchase => purchase.user === user._id && purchase.paymentStatus === 'completed'
+            );
+            setHasPurchased(!!userPurchase);
         }
+    }, [product, user]);
+
+    const handleAuthRequired = () => {
+        navigate('/login', { state: { from: `/product/${id}` } });
     };
 
     const handleBuyNow = () => {
@@ -39,12 +48,15 @@ const ProductDetails = () => {
             handleAuthRequired();
             return;
         }
-        setShowPayment(true);
+        if (!hasPurchased) {
+            setShowPayment(true);
+        }
     };
 
     const handlePaymentSuccess = (downloadUrl) => {
         if (downloadUrl) {
             setPdfUrl(downloadUrl);
+            setHasPurchased(true);
         }
         setShowPayment(false);
     };
@@ -93,7 +105,7 @@ const ProductDetails = () => {
         setActiveTab('addReview');
     };
 
-    if (loading) return <Loading/>;
+    if (loading) return <Loading />;
     if (error) return <div>Error: {error}</div>;
 
     return (
@@ -155,7 +167,7 @@ const ProductDetails = () => {
                         <p>{product?.description}</p>
                     </div>
 
-                    {product?.paymentPaid ? (
+                    {hasPurchased ? (
                         <button
                             className="download-pdf-button"
                             onClick={handleDownloadPdf}
@@ -173,17 +185,7 @@ const ProductDetails = () => {
                         </button>
                     )}
 
-                    {/* Add Review Section (Only if the product is paid for) */}
-                    {/* {product?.paymentPaid && (
-                        <button
-                            className="add-review-button"
-                            onClick={handleAddReview}
-                        >
-                            Add Review
-                        </button>
-                    )} */}
-
-                    {!product?.paymentPaid && (
+                    {!hasPurchased && (
                         <p className="review-notice">
                             You must buy this product before leaving a review.
                         </p>
@@ -213,7 +215,7 @@ const ProductDetails = () => {
                     >
                         Reviews
                     </button>
-                    {product?.paymentPaid && (
+                    {hasPurchased && (
                         <button
                             className={activeTab === 'addReview' ? 'active' : ''}
                             onClick={handleAddReview}
@@ -235,9 +237,9 @@ const ProductDetails = () => {
                             {product?.reviews?.length > 0 ? (
                                 product.reviews.map((rev) => (
                                     <div key={rev._id} className="review-card">
-                                        <img 
-                                            src={rev?.avatar || '/default-avatar.png'} 
-                                            alt="User Avatar" 
+                                        <img
+                                            src={rev?.avatar || '/default-avatar.png'}
+                                            alt="User Avatar"
                                             className="review-avatar"
                                         />
                                         <div className="review-info">
@@ -259,7 +261,7 @@ const ProductDetails = () => {
                         </div>
                     )}
                     
-                    {activeTab === 'addReview' && isAuthenticated && product?.paymentPaid && (
+                    {activeTab === 'addReview' && isAuthenticated && hasPurchased && (
                         <CreateReview
                             productId={product._id}
                             onClose={() => setActiveTab('reviews')}

@@ -44,8 +44,10 @@ const Header = () => {
               </NavLink>
               <p className="absolute-div">{isAuthenticated ? favorites?.length : 0}</p>
             </div>
+          
+            <NavLink to="/profile" onClick={handleLinkClick}>
             <AiOutlineUser size={25} color="#919191" />
-           
+            </NavLink>
             <div className="menu-icon" onClick={toggleMenu}>
               {isMenuOpen ? (
                 <AiOutlineClose size={25} color="#919191" />

@@ -51,14 +51,17 @@ axiosInstance.interceptors.request.use(config => {
 export const login = (email, password) => async (dispatch) => {
     try {
         dispatch({ type: LOGIN_REQUEST });
-        const { data } = await axios.post(`${API_URL}api/v1/login/user`, 
+        const { data } = await axios.post(`${API_URL}api/v1/login/user`,
             { email, password },
             { withCredentials: true }
         );
         localStorage.setItem('token', data.token);
         dispatch({ type: LOGIN_SUCCESS, payload: data });
+        alert("Login successful!");
     } catch (error) {
-        dispatch({ type: LOGIN_FAIL, payload: error.response?.data?.message });
+        const errorMessage = error.response?.data?.message || "Login failed. Please try again.";
+        dispatch({ type: LOGIN_FAIL, payload: errorMessage });
+        alert(errorMessage);
     }
 };
 
@@ -66,7 +69,6 @@ export const login = (email, password) => async (dispatch) => {
 export const register = (formData) => async (dispatch) => {
     try {
         dispatch({ type: REGISTER_REQUEST });
-        
         const config = {
             headers: {
                 'Content-Type': 'multipart/form-data',
@@ -80,22 +82,20 @@ export const register = (formData) => async (dispatch) => {
             config
         );
 
-        // Store token immediately after successful registration
         localStorage.setItem('token', data.token);
-
         dispatch({
             type: REGISTER_SUCCESS,
             payload: data
         });
-
-        // Optionally load user data right after registration
         dispatch(loadUser());
-
+        alert("Registration successful!");
     } catch (error) {
+        const errorMessage = error.response?.data?.message || "Registration failed. Please try again.";
         dispatch({
             type: REGISTER_FAIL,
-            payload: error.response?.data?.message || "Registration failed"
+            payload: errorMessage
         });
+        alert(errorMessage);
     }
 };
 

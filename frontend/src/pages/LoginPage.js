@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { login, register } from "../actions/userAction";
@@ -10,17 +10,24 @@ const Login = () => {
   const dispatch = useDispatch();
   const { isAuthenticated, loading } = useSelector((state) => state.user);
   const navigation = useNavigate();
+  const location = useLocation();
   const [isLogin, setIsLogin] = useState(true);
+  
+  // Get redirect path from location state or use previous path
+  const redirectPath = location.state?.from || document.referrer || "/";
+
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
+
   const [registerData, setRegisterData] = useState({
     name: "",
     email: "",
     password: "",
     avatar: null,
   });
+
   const [alertMessage, setAlertMessage] = useState(null);
 
   const handleLoginChange = (e) => {
@@ -72,13 +79,13 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigation("/");  
+      navigation(redirectPath);
     }
-  }, [isAuthenticated, navigation]);
+  }, [isAuthenticated, navigation, redirectPath]);
 
   return (
     <>
-      {loading && <Loading />}  {/* Show loading overlay if loading is true */}
+      {loading && <Loading />}
       <div className="login-container">
         <div className="container">
           <div className="row justify-content-center">
