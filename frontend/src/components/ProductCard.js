@@ -10,6 +10,7 @@ import unfillstar from "../assest/unfillstar.svg";
 import { AiOutlineEye, AiFillEye } from 'react-icons/ai';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai';
 import { addToFavorites, removeFromFavorites, getFavorites } from "../actions/favoritebooksAction";
+import { addItemToCart } from '../actions/productAction';
 import Loading from "./Loading";
 
 const ProductCard = ({ product }) => {
@@ -17,6 +18,7 @@ const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
   const { favorites, loading } = useSelector((state) => state.favorites);
   const { user } = useSelector((state) => state.user);
+  const { cartItems } = useSelector((state) => state.cart);
   const [removing, setRemoving] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -46,6 +48,19 @@ const ProductCard = ({ product }) => {
     });
   };
 
+  const isProductInCart = (productId) => {
+    return cartItems?.some(item => item._id === productId);
+  };
+
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    dispatch(addItemToCart(product, 1));
+  };
+
   const handleFavoriteClick = async (e) => {
     e.preventDefault();
     if (!user) return;
@@ -68,64 +83,71 @@ const ProductCard = ({ product }) => {
     navigate(`/product/${product._id}`);
   };
 
-  return (<>
-  {loading?<Loading/>:  <Link key={product._id} to={`/product/${product._id}`}>
-      <div
-        className={`product-card ${removing ? 'removing' : ''}`}
-        onMouseEnter={() => !isMobile && setIsHovered(true)}
-        onMouseLeave={() => !isMobile && setIsHovered(false)}
-      >
-        <div className="product-image">
-          <LazyImage src={imageUrl} alt={product.name} />
-        </div>
-       
-        <div className={`fev-see-div ${isHovered || isMobile ? 'show' : ''}`}>
-          <div className="fev-div" onClick={handleFavoriteClick}>
-            {isProductInFavorites(product._id) ? (
-              <AiFillHeart size={24} color="#E3BD83" />
-            ) : (
-              <AiOutlineHeart size={24} color="#919191" />
-            )}
-          </div>
-          <div className="see-div" onClick={handleViewDetails}>
-            <AiOutlineEye 
-              size={24} 
-              color="#919191"
-              className="eye-icon"
-            />
-          </div>
-        </div>
+  return (
+    <>
+      {loading ? <Loading /> : 
+        <Link key={product._id} to={`/product/${product._id}`}>
+          <div
+            className={`product-card ${removing ? 'removing' : ''}`}
+            onMouseEnter={() => !isMobile && setIsHovered(true)}
+            onMouseLeave={() => !isMobile && setIsHovered(false)}
+          >
+            <div className="product-image">
+              <LazyImage src={imageUrl} alt={product.name} />
+            </div>
+            
+            <div className={`fev-see-div ${isHovered || isMobile ? 'show' : ''}`}>
+              <div className="fev-div" onClick={handleFavoriteClick}>
+                {isProductInFavorites(product._id) ? (
+                  <AiFillHeart size={24} color="#E3BD83" />
+                ) : (
+                  <AiOutlineHeart size={24} color="#919191" />
+                )}
+              </div>
+              <div className="see-div" onClick={handleViewDetails}>
+                <AiOutlineEye size={24} color="#919191" className="eye-icon" />
+              </div>
+            </div>
 
-        <div className="product-rating-div">
-          <ReactStars
-            edit={false}
-            value={product?.rating}
-            count={5}
-            size={24}
-            color2={"#E3BD83"}
-            half={true}
-            emptyIcon={
-              <img src={unfillstar} alt="empty star" width="24" height="24" />
-            }
-            fullIcon={
-              <img src={star} alt="filled star" width="24" height="24" />
-            }
-            className="product-stars"
-          />
-        </div>
+            <div className="product-rating-div">
+              <ReactStars
+                edit={false}
+                value={product?.rating}
+                count={5}
+                size={24}
+                color2={"#E3BD83"}
+                half={true}
+                emptyIcon={<img src={unfillstar} alt="empty star" width="24" height="24" />}
+                fullIcon={<img src={star} alt="filled star" width="24" height="24" />}
+                className="product-stars"
+              />
+            </div>
 
-        <div className="product-details">
-          <h4 className="product-heading-name">{product.name}</h4>
-          <p className="author-name">{product?.author}</p>
-          <p className="product-price">
-            <strong>₹</strong>
-            <strong>{product?.price}</strong>
-          </p>
-        </div>
-      </div>
-    </Link>}
-  
-  </>);
+            <div className="product-details">
+              <h4 className="product-heading-name">{product.name}</h4>
+              <p className="author-name">{product?.author}</p>
+              <p className="product-price">
+                <strong>₹</strong>
+                <strong>{product?.price}</strong>
+              </p>
+              <button 
+                className="add-to-cart-button" 
+                onClick={handleAddToCart}
+                disabled={product.stock < 1 || isProductInCart(product._id)}
+              >
+                {product.stock < 1 
+                  ? "Out of Stock" 
+                  : isProductInCart(product._id)
+                    ? "Added to Cart"
+                    : "Add to Cart"
+                }
+              </button>
+            </div>
+          </div>
+        </Link>
+      }
+    </>
+  );
 };
 
 export default ProductCard;

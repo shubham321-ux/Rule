@@ -1,0 +1,165 @@
+.bookstore-cart-wrapper {
+    /* max-width: 1200px; */
+    width: 100%;
+    margin: 0 auto;
+    padding: 48px;
+   
+}
+
+.bookstore-cart-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.bookstore-cart-content {
+    display: flex;
+    gap: 20px;
+}
+
+.bookstore-cart-table {
+    flex: 1;
+    border-collapse: collapse;
+    width: 100%;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.bookstore-cart-table th,
+.bookstore-cart-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.bookstore-cart-table thead tr {
+    background: var(--primary-color);
+    color: white;
+}
+
+.bookstore-cart-table tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+.bookstore-cart-product-image {
+    width: 60px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.bookstore-cart-name-cell {
+    color: #333;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.bookstore-cart-name-cell:hover {
+    color: var(--primary-color);
+}
+
+.bookstore-cart-quantity-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.bookstore-cart-quantity-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.bookstore-cart-quantity-value {
+    min-width: 30px;
+    text-align: center;
+}
+
+.bookstore-cart-remove-btn {
+    background: #ff4444;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.bookstore-cart-summary {
+    width: 300px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.bookstore-cart-summary-content {
+    padding: 20px;
+}
+
+.bookstore-cart-summary-content h3 {
+    margin: 0 0 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.bookstore-cart-summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.bookstore-cart-summary-row.total {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+.bookstore-cart-checkout-btn {
+    width: 100%;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.bookstore-cart-empty {
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    .bookstore-cart-wrappe{
+        padding: 24px;
+    }
+    .bookstore-cart-content {
+        flex-direction: column;
+    }
+    
+    .bookstore-cart-summary {
+        width: 100%;
+    }
+    
+    .bookstore-cart-table {
+        font-size: 14px;
+    }
+    
+    .bookstore-cart-product-image {
+        width: 50px;
+        height: 70px;
+    }
+}

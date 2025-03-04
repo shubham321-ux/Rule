@@ -6,11 +6,11 @@ import storage from 'redux-persist/lib/storage';
 
 import { paymentReducer } from "./reducers/paymentreducer";
 import { productReducers, productDetailReducers, createProductReducer, createReviewReducer } from "./reducers/productreducers";
-import { cartReducer } from "./reducers/cartreducer";
 import { userReducer } from "./reducers/userreducers";
 import { categoryReducer } from "./reducers/categoryReducer";
 import { newOrderReducer, myOrdersReducer, orderDetailsReducer, allOrdersReducer, orderReducer } from './reducers/orderreducers';
 import { favoriteReducer } from './reducers/fevoritebooksReducer';
+import { cartReducer } from "./reducers/productreducers"; // Update this import
 
 const rootReducer = combineReducers({
     products: productReducers,
@@ -33,11 +33,11 @@ const persistConfig = {
     key: 'root',
     storage,
     whitelist: [
+        'cart', // Ensure cart is in whitelist
         'products',
         'productDetails',
         'user',
         'createProduct',
-        'cart',
         'payment',
         'newOrder',
         'myOrders',

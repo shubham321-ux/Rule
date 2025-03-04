@@ -21,6 +21,18 @@ import {
     CREATE_REVIEW_RESET,
     CLEAR_ERRORS
 } from '../constants/productConstant.js';
+import {
+    ADD_TO_CART,
+    REMOVE_FROM_CART,
+    UPDATE_CART_QUANTITY,
+    CLEAR_CART
+} from '../constants/cartConstants';
+const initialState = {
+    cartItems: localStorage.getItem('cartItems') 
+        ? JSON.parse(localStorage.getItem('cartItems')) 
+        : []
+};
+
 
 export const productReducers = (state = { products: [] }, action) => {
     switch (action.type) {
@@ -179,6 +191,65 @@ export const createReviewReducer = (state = { review: {} }, action) => {
                 ...state,
                 error: null,
             };
+        default:
+            return state;
+    }
+};
+
+export const cartReducer = (state = initialState, action) => {
+    switch (action.type) {
+        case ADD_TO_CART: {
+            const newItem = action.payload;
+            const cartItems = state.cartItems || [];
+            const existingItem = cartItems.find(item => item._id === newItem._id);
+            
+            let updatedCartItems;
+            if (existingItem) {
+                updatedCartItems = cartItems.map(item =>
+                    item._id === existingItem._id ? newItem : item
+                );
+            } else {
+                updatedCartItems = [...cartItems, newItem];
+            }
+            
+            localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+            return {
+                ...state,
+                cartItems: updatedCartItems
+            };
+        }
+
+        case REMOVE_FROM_CART: {
+            const cartItems = state.cartItems || [];
+            const updatedCartItems = cartItems.filter(item => item._id !== action.payload);
+            localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+            return {
+                ...state,
+                cartItems: updatedCartItems
+            };
+        }
+
+        case UPDATE_CART_QUANTITY: {
+            const cartItems = state.cartItems || [];
+            const updatedCartItems = cartItems.map(item =>
+                item._id === action.payload.productId
+                    ? { ...item, quantity: action.payload.quantity }
+                    : item
+            );
+            localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
+            return {
+                ...state,
+                cartItems: updatedCartItems
+            };
+        }
+
+        case CLEAR_CART:
+            localStorage.removeItem('cartItems');
+            return {
+                ...state,
+                cartItems: []
+            };
+
         default:
             return state;
     }

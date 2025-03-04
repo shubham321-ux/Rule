@@ -27,6 +27,8 @@ import ProductsForAdmin from "./dashboard/ProductsForAdmin";
 import Alladminorders from "./dashboard/Alladminorders";
 import UsersManagement from "./dashboard/UsersManagement";
 import EditProfile from "./pages/EditProfile";
+import ScrollToTop from "./components/ScrollToTop";
+import Cart from "./pages/Cart";
 function App() {
   const [loading, setLoading] = useState(true);
   const { isAuthenticated, user } = useSelector((state) => state.user);
@@ -53,6 +55,7 @@ function App() {
 
   return (
     <BrowserRouter>
+    <ScrollToTop/>
       <Routes>
         {/* Main Layout Routes */}
         <Route path="/" element={<Layout />}>
@@ -63,7 +66,7 @@ function App() {
           <Route path="about" element={<About />} />
           <Route path="products" element={<Products />} />
           <Route path="product/:id" element={<ProductDetails />} />
-         
+          <Route path="/cart" element={<Cart />} />
           {/* Protected Routes */}
           <Route path="profile" element={<ProtectedRoute><EditProfile/></ProtectedRoute>} />
           <Route path="myorders" element={

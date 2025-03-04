@@ -5,12 +5,19 @@ import LogoutButton from "./LogoutButton";
 import SearchAndCategory from "./SearchAndCategory";
 import "./css/Header.css";
 import Logo from "./Logo";
-import { AiOutlineUser, AiOutlineShoppingCart, AiOutlineHeart, AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
+import { 
+  AiOutlineUser, 
+  AiOutlineShoppingCart, 
+  AiOutlineHeart, 
+  AiOutlineMenu, 
+  AiOutlineClose 
+} from "react-icons/ai";
 
 const Header = () => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const { categories } = useSelector((state) => state.category);
   const { favorites } = useSelector((state) => state.favorites);
+  const { cartItems } = useSelector((state) => state.cart);
   
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -44,9 +51,16 @@ const Header = () => {
               </NavLink>
               <p className="absolute-div">{isAuthenticated ? favorites?.length : 0}</p>
             </div>
-          
+
+            <div className="relative-div">
+              <NavLink to="/cart" onClick={handleLinkClick}>
+                <AiOutlineShoppingCart size={25} color="#919191" />
+              </NavLink>
+              <p className="absolute-div">{isAuthenticated ? cartItems?.length : 0}</p>
+            </div>
+         
             <NavLink to="/profile" onClick={handleLinkClick}>
-            <AiOutlineUser size={25} color="#919191" />
+              <AiOutlineUser size={25} color="#919191" />
             </NavLink>
             <div className="menu-icon" onClick={toggleMenu}>
               {isMenuOpen ? (
@@ -63,11 +77,11 @@ const Header = () => {
           <NavLink onClick={handleLinkClick} to="/products" className={({ isActive }) => isActive ? 'active' : ''}>Products</NavLink>
           <NavLink onClick={handleLinkClick} to="/myorders" className={({ isActive }) => isActive ? 'active' : ''}>My Orders</NavLink>
           <NavLink onClick={handleLinkClick} to="/about" className={({ isActive }) => isActive ? 'active' : ''}>About</NavLink>
-          {isAuthenticated && userrole === "admin" && 
-            <NavLink onClick={handleLinkClick} to="/dashboard" target="_black"  className={({ isActive }) => isActive ? 'active' : ''}>Create Product</NavLink>
+          {isAuthenticated && userrole === "admin" &&
+            <NavLink onClick={handleLinkClick} to="/dashboard" target="_black" className={({ isActive }) => isActive ? 'active' : ''}>Create Product</NavLink>
           }
-          {!isAuthenticated ? 
-            <NavLink onClick={handleLinkClick} to="/login" className={({ isActive }) => isActive ? 'active' : ''}>Login</NavLink> 
+          {!isAuthenticated ?
+            <NavLink onClick={handleLinkClick} to="/login" className={({ isActive }) => isActive ? 'active' : ''}>Login</NavLink>
             : <LogoutButton onClick={handleLinkClick} />
           }
         </div>

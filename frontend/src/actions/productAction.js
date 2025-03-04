@@ -22,6 +22,12 @@ import {
     DELETE_PRODUCT_REQUEST,
     CLEAR_ERRORS
 } from '../constants/productConstant.js'
+import {
+    ADD_TO_CART,
+    REMOVE_FROM_CART,
+    UPDATE_CART_QUANTITY,
+    CLEAR_CART
+} from '../constants/cartConstants';
 
 // Get all products
 export const getProduct = (page = 1, keyword = "", category = "", minPrice = "", maxPrice = "", selectedCategories = []) => async (dispatch) => {
@@ -200,3 +206,47 @@ export const createProductReviewAction = (reviewData) => async (dispatch) => {
 export const clearErrors = () => async (dispatch) => {
     dispatch({ type: CLEAR_ERRORS })
 }
+
+export const addItemToCart = (product, quantity = 1) => (dispatch, getState) => {
+    const cartItem = {
+        _id: product._id,
+        name: product.name,
+        price: product.price,
+        image: product.images[0].url,
+        stock: product.stock,
+        quantity
+    };
+
+    dispatch({
+        type: ADD_TO_CART,
+        payload: cartItem
+    });
+};
+
+
+
+// Remove item from cart
+export const removeItemFromCart = (productId) => async (dispatch, getState) => {
+    dispatch({
+        type: REMOVE_FROM_CART,
+        payload: productId
+    });
+
+    localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems));
+};
+
+// Update cart item quantity
+export const updateCartQuantity = (productId, quantity) => async (dispatch, getState) => {
+    dispatch({
+        type: UPDATE_CART_QUANTITY,
+        payload: { productId, quantity }
+    });
+
+    localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems));
+};
+
+// Clear cart
+export const clearCart = () => async (dispatch) => {
+    dispatch({ type: CLEAR_CART });
+    localStorage.removeItem('cartItems');
+};
