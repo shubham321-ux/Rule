@@ -9,6 +9,7 @@ const Cart = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [showPayment, setShowPayment] = useState(false);
+    const [showPopup, setShowPopup] = useState(false); // State for popup
     const { cartItems = [] } = useSelector(state => state.cart || { cartItems: [] });
 
     const handleQuantityChange = (productId, quantity) => {
@@ -29,18 +30,8 @@ const Cart = () => {
     };
 
     const handleCheckout = () => {
-        const orderData = {
-            orderItems: cartItems.map(item => ({
-                name: item.name,
-                price: item.price,
-                product: item._id,
-                quantity: item.quantity,
-                image: item.image
-            })),
-            itemsPrice: calculateSubtotal(),
-            totalPrice: calculateTotal()
-        };
-        setShowPayment(true);
+        // Instead of proceeding with payment, show the popup
+        setShowPopup(true);
     };
 
     const handlePaymentSuccess = () => {
@@ -50,6 +41,10 @@ const Cart = () => {
 
     const navigateToProduct = (productId) => {
         navigate(`/product/${productId}`);
+    };
+
+    const handleClosePopup = () => {
+        setShowPopup(false); // Close the popup
     };
 
     return (
@@ -67,8 +62,6 @@ const Cart = () => {
                                 <th>Product</th>
                                 <th>Name</th>
                                 <th>Price</th>
-                                {/* <th>Quantity</th> */}
-                                {/* <th>Subtotal</th> */}
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -87,18 +80,6 @@ const Cart = () => {
                                         {item.name}
                                     </td>
                                     <td className="bookstore-cart-price-cell">₹{item.price}</td>
-                                    {/* <td className="bookstore-cart-quantity-cell">
-                                        <div className="bookstore-cart-quantity-controls">
-                                            <button onClick={() => handleQuantityChange(item._id, Math.max(1, item.quantity - 1))}>
-                                                -
-                                            </button>
-                                            <span>{item.quantity}</span>
-                                            <button onClick={() => handleQuantityChange(item._id, Math.min(item.stock, item.quantity + 1))}>
-                                                +
-                                            </button>
-                                        </div>
-                                    </td> */}
-                                    {/* <td className="bookstore-cart-subtotal-cell">₹{item.price * item.quantity}</td> */}
                                     <td className="bookstore-cart-action-cell">
                                         <button onClick={() => handleRemoveItem(item._id)} className="bookstore-cart-remove-btn">
                                             Remove
@@ -123,7 +104,7 @@ const Cart = () => {
                                 <span>Total:</span>
                                 <span>₹{calculateTotal()}</span>
                             </div>
-                            <button 
+                            <button
                                 className="bookstore-cart-checkout-btn"
                                 onClick={handleCheckout}
                                 disabled={cartItems.length === 0}
@@ -134,9 +115,21 @@ const Cart = () => {
                     </div>
                 </div>
             )}
-            
+
+            {showPopup && (
+                <div className="popup-overlay">
+                    <div className="popup-content">
+                        <h2>Payment Not Available Now</h2>
+                        <p>We are currently unable to process payments. Please try again later.</p>
+                        <button onClick={handleClosePopup} className="go-back-btn">
+                            Go Back
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {showPayment && (
-                <Payment 
+                <Payment
                     products={cartItems}
                     totalAmount={calculateTotal()}
                     onSuccess={handlePaymentSuccess}
