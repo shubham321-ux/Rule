@@ -15,16 +15,17 @@ const ProductDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    
+
     const { product, loading, error } = useSelector((state) => state.productDetails);
     const { favorites } = useSelector((state) => state.favorites);
     const { user, isAuthenticated } = useSelector((state) => state.user);
-    
+
     const [showPayment, setShowPayment] = useState(false);
     const [hasPurchased, setHasPurchased] = useState(false);
     const [pdfUrl, setPdfUrl] = useState(null);
     const [selectedImage, setSelectedImage] = useState(0);
     const [activeTab, setActiveTab] = useState('description');
+    const [showModal, setShowModal] = useState(false); // State to control modal visibility
 
     useEffect(() => {
         dispatch(getProductDetails(id));
@@ -49,7 +50,7 @@ const ProductDetails = () => {
             return;
         }
         if (!hasPurchased) {
-            setShowPayment(true);
+            setShowModal(true); // Show the modal when "Buy Now" is clicked
         }
     };
 
@@ -107,6 +108,20 @@ const ProductDetails = () => {
 
     if (loading) return <Loading />;
     if (error) return <div>Error: {error}</div>;
+
+    // Modal Component
+    const Modal = ({ show, onClose }) => {
+        if (!show) return null;
+        return (
+            <div className="modal-overlay">
+                <div className="modal-content">
+                    <h2>Payment Not Available Now</h2>
+                    <p>We apologize, but payment is currently not available for this product.</p>
+                    <button className="go-back-button" onClick={onClose}>Go Back</button>
+                </div>
+            </div>
+        );
+    };
 
     return (
         <div className="product-details-container">
@@ -231,7 +246,7 @@ const ProductDetails = () => {
                             {product?.description}
                         </div>
                     )}
-                    
+
                     {activeTab === 'reviews' && (
                         <div className="reviews-content">
                             {product?.reviews?.length > 0 ? (
@@ -260,7 +275,7 @@ const ProductDetails = () => {
                             )}
                         </div>
                     )}
-                    
+
                     {activeTab === 'addReview' && isAuthenticated && hasPurchased && (
                         <CreateReview
                             productId={product._id}
@@ -276,6 +291,8 @@ const ProductDetails = () => {
                     onSuccess={handlePaymentSuccess}
                 />
             )}
+
+            <Modal show={showModal} onClose={() => setShowModal(false)} />
         </div>
     );
 };
